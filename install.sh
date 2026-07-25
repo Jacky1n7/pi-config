@@ -5,30 +5,30 @@ set -euo pipefail
 
 echo "📦 安装 19 个 Pi 插件包..."
 PACKAGES=(
-  pi-subagents
-  pi-mcp-adapter
-  pi-web-access
-  pi-lens
-  context-mode
-  pi-hermes-memory
-  @juicesharp/rpiv-todo
-  @narumitw/pi-statusline
-  pi-marketplace
-  @narumitw/pi-github-pr
-  @narumitw/pi-plan-mode
-  @narumitw/pi-goal
-  @baretread/pi-forge
-  pi-playwright
-  pi-simplify
-  @vigolium/piolium
-  @firstpick/pi-prompts-git-pr
-  @firstpick/pi-skill-deep-research
-  @victor-software-house/pi-curated-themes
+	pi-subagents
+	pi-mcp-adapter
+	pi-web-access
+	pi-lens
+	context-mode
+	pi-hermes-memory
+	@juicesharp/rpiv-todo
+	@narumitw/pi-statusline
+	pi-marketplace
+	@narumitw/pi-github-pr
+	@narumitw/pi-plan-mode
+	@narumitw/pi-goal
+	@baretread/pi-forge
+	pi-playwright
+	pi-simplify
+	@vigolium/piolium
+	@firstpick/pi-prompts-git-pr
+	@firstpick/pi-skill-deep-research
+	@victor-software-house/pi-curated-themes
 )
 
 for pkg in "${PACKAGES[@]}"; do
-  echo "  → pi install npm:$pkg"
-  pi install "npm:$pkg" || echo "    ⚠️  安装失败: $pkg（可稍后重试）"
+	echo "  → pi install npm:$pkg"
+	pi install "npm:$pkg" || echo "    ⚠️  安装失败: $pkg（可稍后重试）"
 done
 
 echo ""
@@ -39,8 +39,8 @@ mkdir -p "$MCP_DIR"
 
 # 合并而非覆盖：保留已有的 server
 if [ -f "$MCP_FILE" ]; then
-  echo "  检测到已有 $MCP_FILE，将合并新 server..."
-  node -e '
+	echo "  检测到已有 $MCP_FILE，将合并新 server..."
+	node -e '
     const fs = require("fs");
     const existing = JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
     const incoming = JSON.parse(fs.readFileSync(process.argv[2],"utf8"));
@@ -49,8 +49,8 @@ if [ -f "$MCP_FILE" ]; then
     console.log("  ✓ 已合并 MCP server:", Object.keys(existing.mcpServers).join(", "));
   ' "$MCP_FILE" "$(dirname "$0")/mcp.json"
 else
-  cp "$(dirname "$0")/mcp.json" "$MCP_FILE"
-  echo "  ✓ 已写入 $MCP_FILE"
+	cp "$(dirname "$0")/mcp.json" "$MCP_FILE"
+	echo "  ✓ 已写入 $MCP_FILE"
 fi
 
 echo ""
