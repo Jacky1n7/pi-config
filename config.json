@@ -1,11 +1,11 @@
 {
   "_meta": {
-    "exportedAt": "2026-07-25T06:50:07.980Z",
+    "exportedAt": "2026-07-25T10:08:18.764Z",
     "piVersion": "0.82.0",
-    "scope": "plugins + global skills + MCP servers (no providers/models, no secrets)"
+    "scope": "plugins + global skills + MCP servers"
   },
   "plugins": {
-    "count": 19,
+    "count": 18,
     "packages": [
       "npm:pi-subagents",
       "npm:pi-mcp-adapter",
@@ -22,35 +22,33 @@
       "npm:@baretread/pi-forge",
       "npm:pi-playwright",
       "npm:pi-simplify",
-      "npm:@vigolium/piolium",
       "npm:@firstpick/pi-prompts-git-pr",
       "npm:@firstpick/pi-skill-deep-research",
       "npm:@victor-software-house/pi-curated-themes"
     ],
     "installCommands": [
-      "pi install npm:npm:pi-subagents",
-      "pi install npm:npm:pi-mcp-adapter",
-      "pi install npm:npm:pi-web-access",
-      "pi install npm:npm:pi-lens",
-      "pi install npm:npm:context-mode",
-      "pi install npm:npm:pi-hermes-memory",
-      "pi install npm:npm:@juicesharp/rpiv-todo",
-      "pi install npm:npm:@narumitw/pi-statusline",
-      "pi install npm:npm:pi-marketplace",
-      "pi install npm:npm:@narumitw/pi-github-pr",
-      "pi install npm:npm:@narumitw/pi-plan-mode",
-      "pi install npm:npm:@narumitw/pi-goal",
-      "pi install npm:npm:@baretread/pi-forge",
-      "pi install npm:npm:pi-playwright",
-      "pi install npm:npm:pi-simplify",
-      "pi install npm:npm:@vigolium/piolium",
-      "pi install npm:npm:@firstpick/pi-prompts-git-pr",
-      "pi install npm:npm:@firstpick/pi-skill-deep-research",
-      "pi install npm:npm:@victor-software-house/pi-curated-themes"
+      "pi install npm:pi-subagents",
+      "pi install npm:pi-mcp-adapter",
+      "pi install npm:pi-web-access",
+      "pi install npm:pi-lens",
+      "pi install npm:context-mode",
+      "pi install npm:pi-hermes-memory",
+      "pi install npm:@juicesharp/rpiv-todo",
+      "pi install npm:@narumitw/pi-statusline",
+      "pi install npm:pi-marketplace",
+      "pi install npm:@narumitw/pi-github-pr",
+      "pi install npm:@narumitw/pi-plan-mode",
+      "pi install npm:@narumitw/pi-goal",
+      "pi install npm:@baretread/pi-forge",
+      "pi install npm:pi-playwright",
+      "pi install npm:pi-simplify",
+      "pi install npm:@firstpick/pi-prompts-git-pr",
+      "pi install npm:@firstpick/pi-skill-deep-research",
+      "pi install npm:@victor-software-house/pi-curated-themes"
     ]
   },
   "globalSkills": {
-    "count": 38,
+    "count": 18,
     "fromPackages": {
       "pi-subagents": [
         "pi-subagents"
@@ -76,28 +74,6 @@
       ],
       "pi-playwright": [
         "playwright-browser"
-      ],
-      "@vigolium/piolium": [
-        "security-threat-model",
-        "zeroize-audit",
-        "vuln-report",
-        "semgrep-rule-creator",
-        "semgrep",
-        "differential-review",
-        "insecure-defaults",
-        "sarif-parsing",
-        "last30days",
-        "variant-analysis",
-        "wooyun-legacy",
-        "supply-chain-risk-auditor",
-        "audit",
-        "codeql",
-        "fp-check",
-        "code-reviewer",
-        "spec-to-code-compliance",
-        "agentic-actions-auditor",
-        "sharp-edges",
-        "semgrep-rule-variant-creator"
       ],
       "@firstpick/pi-skill-deep-research": [
         "deep-research"

@@ -1,8 +1,8 @@
 # 我的 Pi Coding Agent 配置
 
-一份可直接复刻的 [Pi](https://pi.dev) 配置，整理成教程形式分享。包含 **19 个插件、38 个全局 Skill、2 个 MCP server**，配一键安装脚本。
+一份可直接复刻的 [Pi](https://pi.dev) 配置，整理成教程形式分享。包含 **18 个插件、18 个全局 Skill、2 个 MCP server**，配一键安装脚本。
 
-仓库里的每样东西都经过实际使用筛选，目标是把 Pi 打造成一个能做安全审计、能多代理协作、能省 token、能跑浏览器的全能终端编码代理。
+仓库里的每样东西都经过实际使用筛选，目标是把 Pi 打造成一个能多代理协作、能省 token、能跑浏览器的全能终端编码代理。
 
 ---
 
@@ -32,19 +32,19 @@ npm install -g @earendil-works/pi-coding-agent
 git clone https://github.com/realchendahuang/pi-config.git
 cd pi-config
 
-# 2. 一键安装（装 19 个插件 + 合并 MCP 配置）
+# 2. 一键安装（装 18 个插件 + 合并 MCP 配置）
 bash install.sh
 
 # 3. 重启 pi，让所有插件和 MCP server 生效
 ```
 
-脚本会自动把 19 个插件用 `pi install` 装好，并把 2 个 MCP server 的配置合并进 `~/.config/mcp/mcp.json`（如果该文件已存在，会保留你已有的 server，只做合并）。
+脚本会自动把 18 个插件用 `pi install` 装好，并把 2 个 MCP server 的配置合并进 `~/.config/mcp/mcp.json`（如果该文件已存在，会保留你已有的 server，只做合并）。
 
 > 安装完之后，模型的 provider / key 还需要你自己用 `pi config` 配一下——这部分因人而异，不在本仓库范围内。
 
 ---
 
-## 三、插件目录（19 个，按用途分组）
+## 三、插件目录（18 个，按用途分组）
 
 下面逐个讲清楚每个插件是干嘛的、为什么选它。
 
@@ -119,29 +119,6 @@ MCP（Model Context Protocol）适配器。让 Pi 能连接任何 MCP server，�
 
 Pi 包市场入口。在 Pi 里直接搜索、查看详情、安全审计、安装 npm 上的 pi 包。配套 `marketplace_search` / `marketplace_detail` / `marketplace_audit` / `marketplace_install` 工具。发现新插件很方便。
 
-### 🛡️ 安全审计（重头戏，来自 `@vigolium/piolium`）
-
-这一套是本配置最硬核的部分，提供 **20 个安全 skill**，把 Pi 变成一个能做专业安全审计的工作台：
-
-- **`audit`**：10 阶段全仓库安全审计方法论（advisory 情报 + SAST + 手工深挖 + 误报排除 + 变体分析 + 报告）
-- **`semgrep`** / **`codeql`**：跑两大静态分析引擎，semgrep 支持并行子代理、codeql 做跨过程数据流污点分析
-- **`code-reviewer`**：审本地改动或远程 PR，聚焦正确性和可维护性
-- **`differential-review`**：安全导向的差异 review，算爆炸半径、查测试覆盖
-- **`vuln-report`**：把单个漏洞写成 GitHub advisory 风格的披露报告
-- **`variant-analysis`**：找到一个 bug 后，跨代码库搜同类变体
-- **`wooyun-legacy`**：88000+ 历史 case 蒸馏的 Web 漏洞测试方法论
-- **`zeroize-audit`**：C/C++/Rust 敏感数据清零审计，含汇编级分析
-- **`insecure-defaults`**：检测 fail-open 的不安全默认值
-- **`sharp-edges`**：识别容易误用的 API / 危险配置
-- **`supply-chain-risk-auditor`**：评估依赖供应链风险
-- **`security-threat-model`**：仓库级威胁建模
-- **`agentic-actions-auditor`**：审 AI agent 集成的 GitHub Actions 工作流安全
-- **`sarif-parsing`**：解析 SARIF 扫描结果
-- **`fp-check`**：系统性验证疑似漏洞，消除误报
-- **`spec-to-code-compliance`**：代码 vs 白皮书 / spec 合规检查（区块链审计用）
-- **`semgrep-rule-creator`** / **`semgrep-rule-variant-creator`**：写 / 移植自定义 semgrep 规则
-- **`last30days`**：从 Reddit / X / Web 搜最近 30 天的社区讨论
-
 ### ✨ 实用工具与主题
 
 #### `@juicesharp/rpiv-todo`
@@ -174,7 +151,7 @@ Pi 包市场入口。在 Pi 里直接搜索、查看详情、安全审计、安�
 
 ---
 
-## 四、全局 Skill 清单（38 个）
+## 四、全局 Skill 清单（18 个）
 
 所有 skill 都是全局的——装了包就处处可用，跟当前在哪个项目无关。
 
@@ -184,7 +161,6 @@ Pi 包市场入口。在 Pi 里直接搜索、查看详情、安全审计、安�
 | 浏览器 | `playwright-browser` | pi-playwright |
 | 上下文/知识库 | `context-mode`、`ctx-search`、`ctx-index`、`ctx-stats`、`ctx-purge`、`ctx-insight`、`ctx-doctor`、`ctx-upgrade` | context-mode |
 | 代码智能 | `pi-lens-ast-grep`、`pi-lens-lsp-navigation`、`pi-lens-write-ast-grep-rule`、`pi-lens-write-tree-sitter-rule` | pi-lens |
-| 安全审计（20） | `audit`、`semgrep`、`codeql`、`code-reviewer`、`differential-review`、`vuln-report`、`variant-analysis`、`wooyun-legacy`、`zeroize-audit`、`insecure-defaults`、`sharp-edges`、`supply-chain-risk-auditor`、`security-threat-model`、`agentic-actions-auditor`、`sarif-parsing`、`fp-check`、`spec-to-code-compliance`、`semgrep-rule-creator`、`semgrep-rule-variant-creator`、`last30days` | @vigolium/piolium |
 | 代理编排 | `pi-subagents` | pi-subagents |
 | 主题 | `adapt-ghostty-theme-to-pi` | @victor-software-house |
 
@@ -222,7 +198,7 @@ Chrome DevTools 远程控制，29 个工具（点击、截图、网络抓包、�
 
 | 文件 | 说明 |
 | --- | --- |
-| `install.sh` | 一键安装脚本：装 19 个插件 + 合并 MCP 配置 |
+| `install.sh` | 一键安装脚本：装 18 个插件 + 合并 MCP 配置 |
 | `config.json` | 机器可读的完整配置（plugins / globalSkills / mcpServers / UI / tools） |
 | `mcp.json` | MCP server 配置，可直接放到 `~/.config/mcp/mcp.json` |
 | `README.md` | 本文件 |
