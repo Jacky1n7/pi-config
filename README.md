@@ -1,5 +1,28 @@
 # 我的 Pi Coding Agent 配置
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-success)](LICENSE)
+[![Pi](https://img.shields.io/badge/Pi-0.82.0-8A2BE2)](https://pi.dev)
+[![Plugins](https://img.shields.io/badge/plugins-17-blue)](#六插件目录17个按用途分组)
+[![Skills](https://img.shields.io/badge/skills-18-green)](#七全局-skill-清单18个)
+[![MCP](https://img.shields.io/badge/MCP-2-orange)](#八mcp-server2个)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#五快速上手3步)
+[![GitHub stars](https://img.shields.io/github/stars/realchendahuang/pi-config?style=social)](https://github.com/realchendahuang/pi-config/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/realchendahuang/pi-config)](https://github.com/realchendahuang/pi-config/commits)
+[![Source](https://img.shields.io/badge/source-GitHub-black)](https://github.com/realchendahuang/pi-config)
+
+<!-- ASCII 渲染测试：下面的 banner 用 Unicode 块字符，测试 GitHub 等宽渲染 -->
+
+```
+██████╗ ██╗     ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
+██╔══██╗██║    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
+██████╔╝██║    ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+██╔═══╝ ██║    ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+██║     ██║    ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+╚═╝     ╚═╝     ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
+                                                               
+   17 plugins · 18 global skills · 2 MCP servers · one-line installer
+```
+
 一份可直接复刻的 [Pi](https://pi.dev) 配置，整理成教程形式分享。包含 **17 个插件、18 个全局 Skill、2 个 MCP server**，配一键安装脚本。
 
 仓库里的每样东西都经过实际使用筛选，目标是把 Pi 打造成一个能多代理协作、能省 token、能跑浏览器的全能终端编码代理。
@@ -393,6 +416,37 @@ Chrome DevTools 远程控制，29 个工具（点击、截图、网络抓包、�
 2. **重启 Pi**：让新装的插件和 MCP server 生效。
 3. **试试 skill**：在 Pi 里直接描述任务，模型会自动匹配合适的 skill；也可以用 `/context-mode:ctx-stats` 这类斜杠命令手动调。
 4. **调工具开关**（可选）：Pi 的 `tools.json` 可以把不常用工具设为 inactive，保持工具列表干净。我个人的做法是把 `ast_grep_*` / `grep` / `find` / `ls` / `lsp_navigation` 设为 inactive，需要时通过 `pi_lens_activate_tools` 按需唤起。`config.json` 里有我的完整 tools 配置可参考。
+
+---
+
+## 十一、Star 趋势
+
+[![Star History Chart](https://api.star-history.com/svg?repos=realchendahuang/pi-config&type=Date)](https://star-history.com/#realchendahuang/pi-config&Date)
+
+> 仓库刚建，曲线会随 star 增长实时更新。点击图片可跳转 star-history 交互页。
+
+---
+
+## 十二、贡献活动折线图
+
+下面这张 ASCII 折线图由本仓库的真实 `git log` 生成（按小时分桶统计提交数），直接用等宽块字符绘制——既是贡献趋势可视化，也验证 GitHub 的等宽渲染。
+
+```
+按小时提交分布（2026-07-25）
+
+ 4 │      ●─
+   │      ●─
+   │      ●─
+   │      ●─
+   │  ╱   ●─
+   │  ●─  ●─
+    └┴───┴───
+     17:00 18:00
+
+总提交: 5 | 时间跨度: 17:34 → 18:13
+```
+
+> 随着提交增加，这张图会按小时/按天自动重绘。生成脚本思路：`git log --pretty=format:%ad` → 按小时分桶 → 用 `●` / `╱` / `─` 画线。
 
 ---
 
