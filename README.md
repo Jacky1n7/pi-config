@@ -1,6 +1,6 @@
 # 我的 Pi Coding Agent 配置
 
-一份可直接复刻的 [Pi](https://pi.dev) 配置，整理成教程形式分享。包含 **18 个插件、18 个全局 Skill、2 个 MCP server**，配一键安装脚本。
+一份可直接复刻的 [Pi](https://pi.dev) 配置，整理成教程形式分享。包含 **17 个插件、18 个全局 Skill、2 个 MCP server**，配一键安装脚本。
 
 仓库里的每样东西都经过实际使用筛选，目标是把 Pi 打造成一个能多代理协作、能省 token、能跑浏览器的全能终端编码代理。
 
@@ -32,19 +32,19 @@ npm install -g @earendil-works/pi-coding-agent
 git clone https://github.com/realchendahuang/pi-config.git
 cd pi-config
 
-# 2. 一键安装（装 18 个插件 + 合并 MCP 配置）
+# 2. 一键安装（装 17 个插件 + 合并 MCP 配置）
 bash install.sh
 
 # 3. 重启 pi，让所有插件和 MCP server 生效
 ```
 
-脚本会自动把 18 个插件用 `pi install` 装好，并把 2 个 MCP server 的配置合并进 `~/.config/mcp/mcp.json`（如果该文件已存在，会保留你已有的 server，只做合并）。
+脚本会自动把 17 个插件用 `pi install` 装好，并把 2 个 MCP server 的配置合并进 `~/.config/mcp/mcp.json`（如果该文件已存在，会保留你已有的 server，只做合并）。
 
 > 安装完之后，模型的 provider / key 还需要你自己用 `pi config` 配一下——这部分因人而异，不在本仓库范围内。
 
 ---
 
-## 三、插件目录（18 个，按用途分组）
+## 三、插件目录（17 个，按用途分组）
 
 下面逐个讲清楚每个插件是干嘛的、为什么选它。
 
@@ -69,10 +69,6 @@ bash install.sh
 #### `@narumitw/pi-plan-mode`
 
 只读的计划模式（类似 Codex 的 read-only collaboration）。让模型先出方案、跟你讨论清楚，再进入执行。避免一上来就乱改文件。
-
-#### `@baretread/pi-forge`
-
-一套 Forge 主题 + 视觉氛围（哑光石墨 + 熔铜配色）。同时也带了扩展锻造工具，方便自己开发新插件。
 
 ### 🔍 代码智能与上下文管理
 
@@ -198,7 +194,7 @@ Chrome DevTools 远程控制，29 个工具（点击、截图、网络抓包、�
 
 | 文件 | 说明 |
 | --- | --- |
-| `install.sh` | 一键安装脚本：装 18 个插件 + 合并 MCP 配置 |
+| `install.sh` | 一键安装脚本：装 17 个插件 + 合并 MCP 配置 |
 | `config.json` | 机器可读的完整配置（plugins / globalSkills / mcpServers / UI / tools） |
 | `mcp.json` | MCP server 配置，可直接放到 `~/.config/mcp/mcp.json` |
 | `README.md` | 本文件 |

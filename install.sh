@@ -3,7 +3,7 @@
 # 不含供应商/模型/key —— 那些请用 `pi config` 自行配置
 set -euo pipefail
 
-echo "📦 安装 18 个 Pi 插件包..."
+echo "📦 安装 17 个 Pi 插件包..."
 PACKAGES=(
 	pi-subagents
 	pi-mcp-adapter
@@ -17,7 +17,6 @@ PACKAGES=(
 	@narumitw/pi-github-pr
 	@narumitw/pi-plan-mode
 	@narumitw/pi-goal
-	@baretread/pi-forge
 	pi-playwright
 	pi-simplify
 	@firstpick/pi-prompts-git-pr

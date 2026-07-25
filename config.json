@@ -1,11 +1,11 @@
 {
   "_meta": {
-    "exportedAt": "2026-07-25T10:08:18.764Z",
+    "exportedAt": "2026-07-25T10:10:49.486Z",
     "piVersion": "0.82.0",
     "scope": "plugins + global skills + MCP servers"
   },
   "plugins": {
-    "count": 18,
+    "count": 17,
     "packages": [
       "npm:pi-subagents",
       "npm:pi-mcp-adapter",
@@ -19,7 +19,6 @@
       "npm:@narumitw/pi-github-pr",
       "npm:@narumitw/pi-plan-mode",
       "npm:@narumitw/pi-goal",
-      "npm:@baretread/pi-forge",
       "npm:pi-playwright",
       "npm:pi-simplify",
       "npm:@firstpick/pi-prompts-git-pr",
@@ -39,7 +38,6 @@
       "pi install npm:@narumitw/pi-github-pr",
       "pi install npm:@narumitw/pi-plan-mode",
       "pi install npm:@narumitw/pi-goal",
-      "pi install npm:@baretread/pi-forge",
       "pi install npm:pi-playwright",
       "pi install npm:pi-simplify",
       "pi install npm:@firstpick/pi-prompts-git-pr",
