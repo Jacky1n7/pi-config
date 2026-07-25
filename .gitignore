@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+
+# editor
+*.swp
+.vscode/
+
+# 不要把真实的 pi 配置/密钥误提交
+.env
+*secret*
+*api*key*
+real-config/

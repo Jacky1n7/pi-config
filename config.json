@@ -1,0 +1,189 @@
+{
+  "_meta": {
+    "exportedAt": "2026-07-25T06:50:07.980Z",
+    "piVersion": "0.82.0",
+    "scope": "plugins + global skills + MCP servers (no providers/models, no secrets)"
+  },
+  "plugins": {
+    "count": 19,
+    "packages": [
+      "npm:pi-subagents",
+      "npm:pi-mcp-adapter",
+      "npm:pi-web-access",
+      "npm:pi-lens",
+      "npm:context-mode",
+      "npm:pi-hermes-memory",
+      "npm:@juicesharp/rpiv-todo",
+      "npm:@narumitw/pi-statusline",
+      "npm:pi-marketplace",
+      "npm:@narumitw/pi-github-pr",
+      "npm:@narumitw/pi-plan-mode",
+      "npm:@narumitw/pi-goal",
+      "npm:@baretread/pi-forge",
+      "npm:pi-playwright",
+      "npm:pi-simplify",
+      "npm:@vigolium/piolium",
+      "npm:@firstpick/pi-prompts-git-pr",
+      "npm:@firstpick/pi-skill-deep-research",
+      "npm:@victor-software-house/pi-curated-themes"
+    ],
+    "installCommands": [
+      "pi install npm:npm:pi-subagents",
+      "pi install npm:npm:pi-mcp-adapter",
+      "pi install npm:npm:pi-web-access",
+      "pi install npm:npm:pi-lens",
+      "pi install npm:npm:context-mode",
+      "pi install npm:npm:pi-hermes-memory",
+      "pi install npm:npm:@juicesharp/rpiv-todo",
+      "pi install npm:npm:@narumitw/pi-statusline",
+      "pi install npm:npm:pi-marketplace",
+      "pi install npm:npm:@narumitw/pi-github-pr",
+      "pi install npm:npm:@narumitw/pi-plan-mode",
+      "pi install npm:npm:@narumitw/pi-goal",
+      "pi install npm:npm:@baretread/pi-forge",
+      "pi install npm:npm:pi-playwright",
+      "pi install npm:npm:pi-simplify",
+      "pi install npm:npm:@vigolium/piolium",
+      "pi install npm:npm:@firstpick/pi-prompts-git-pr",
+      "pi install npm:npm:@firstpick/pi-skill-deep-research",
+      "pi install npm:npm:@victor-software-house/pi-curated-themes"
+    ]
+  },
+  "globalSkills": {
+    "count": 38,
+    "fromPackages": {
+      "pi-subagents": [
+        "pi-subagents"
+      ],
+      "pi-web-access": [
+        "librarian"
+      ],
+      "pi-lens": [
+        "pi-lens-ast-grep",
+        "pi-lens-write-ast-grep-rule",
+        "pi-lens-lsp-navigation",
+        "pi-lens-write-tree-sitter-rule"
+      ],
+      "context-mode": [
+        "context-mode",
+        "ctx-purge",
+        "ctx-insight",
+        "ctx-upgrade",
+        "ctx-search",
+        "ctx-doctor",
+        "ctx-stats",
+        "ctx-index"
+      ],
+      "pi-playwright": [
+        "playwright-browser"
+      ],
+      "@vigolium/piolium": [
+        "security-threat-model",
+        "zeroize-audit",
+        "vuln-report",
+        "semgrep-rule-creator",
+        "semgrep",
+        "differential-review",
+        "insecure-defaults",
+        "sarif-parsing",
+        "last30days",
+        "variant-analysis",
+        "wooyun-legacy",
+        "supply-chain-risk-auditor",
+        "audit",
+        "codeql",
+        "fp-check",
+        "code-reviewer",
+        "spec-to-code-compliance",
+        "agentic-actions-auditor",
+        "sharp-edges",
+        "semgrep-rule-variant-creator"
+      ],
+      "@firstpick/pi-skill-deep-research": [
+        "deep-research"
+      ],
+      "@victor-software-house/pi-curated-themes": [
+        "adapt-ghostty-theme-to-pi"
+      ]
+    },
+    "custom": [
+      "chrome-devtools (~/.agents/skills/)"
+    ]
+  },
+  "mcpServers": {
+    "count": 2,
+    "config": {
+      "mcpServers": {
+        "context7": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@upstash/context7-mcp@latest"
+          ],
+          "lifecycle": "lazy"
+        },
+        "chrome-devtools": {
+          "command": "/Users/kim/.config/opencode/bin/chrome-devtools-mcp",
+          "lifecycle": "lazy"
+        }
+      }
+    }
+  },
+  "ui": {
+    "theme": "github-dark-colorblind",
+    "defaultThinkingLevel": "high",
+    "steeringMode": "all",
+    "followUpMode": "all",
+    "statusline": "pi-statusline (@narumitw/pi-statusline)"
+  },
+  "tools": {
+    "active": [
+      "bash",
+      "edit",
+      "fetch_content",
+      "get_search_content",
+      "goal_blocked",
+      "goal_complete",
+      "intercom",
+      "lens_diagnostics",
+      "lsp_diagnostics",
+      "marketplace_audit",
+      "marketplace_detail",
+      "marketplace_install",
+      "marketplace_search",
+      "mcp",
+      "memory",
+      "memory_search",
+      "module_report",
+      "pi_lens_activate_tools",
+      "read",
+      "read_enclosing",
+      "read_symbol",
+      "session_search",
+      "skill_manage",
+      "subagent",
+      "subagent_gate",
+      "subagent_supervisor",
+      "subagent_wait",
+      "symbol_search",
+      "todo",
+      "web_search",
+      "workflow_run",
+      "workflow_status",
+      "write"
+    ],
+    "inactive": [
+      "ast_grep_dump",
+      "ast_grep_outline",
+      "ast_grep_replace",
+      "ast_grep_search",
+      "find",
+      "grep",
+      "lens_diagnostic_mark",
+      "ls",
+      "lsp_navigation",
+      "plan_mode_complete",
+      "plan_mode_question"
+    ]
+  }
+}
