@@ -1,6 +1,11 @@
 {
-  "theme": "github-dark-colorblind",
-  "defaultThinkingLevel": "high",
-  "steeringMode": "all",
-  "followUpMode": "all"
+  "defaultProjectTrust": "ask",
+  "transport": "auto",
+  "terminal": { "showTerminalProgress": true },
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 16384,
+    "keepRecentTokens": 20000
+  },
+  "retry": { "enabled": true, "maxRetries": 3 }
 }

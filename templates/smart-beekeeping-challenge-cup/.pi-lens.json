@@ -1,0 +1,29 @@
+{
+  "ignore": [
+    "SY-202601-比赛数据/**",
+    "训练数据/**",
+    "训练结果/**",
+    "标注素材/**",
+    "交付资料/**",
+    "output/**",
+    "tmp/**",
+    ".docx_review/**",
+    "智慧养蜂国奖冲刺知识库/.obsidian/**",
+    "**/*.pt",
+    "**/*.onnx",
+    "**/*.engine",
+    "**/*.mp4",
+    "**/*.pdf"
+  ],
+  "format": { "enabled": false },
+  "autofix": { "enabled": false },
+  "actionableWarnings": {
+    "autoFix": { "enabled": false }
+  },
+  "maxProjectFiles": 4000,
+  "reviewGraph": { "maxFiles": 8000 },
+  "rules": {
+    "high-complexity": { "threshold": 22 },
+    "high-fan-out": { "threshold": 30 }
+  }
+}

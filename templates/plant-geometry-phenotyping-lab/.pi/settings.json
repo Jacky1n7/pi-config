@@ -1,0 +1,17 @@
+{
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 16384,
+    "keepRecentTokens": 24000
+  },
+  "subagents": {
+    "projectRootResolution": "git-root",
+    "defaultThinking": "medium",
+    "agentOverrides": {
+      "scout": { "thinking": "low" },
+      "worker": { "thinking": "high" },
+      "reviewer": { "thinking": "high" },
+      "oracle": { "thinking": "max" }
+    }
+  }
+}

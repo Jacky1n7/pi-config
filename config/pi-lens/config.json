@@ -1,0 +1,42 @@
+{
+  "lens": { "enabled": true },
+  "lsp": { "enabled": true },
+  "tests": { "enabled": true },
+  "delta": { "enabled": true },
+  "opengrep": { "enabled": true },
+  "readGuard": { "enabled": true },
+  "format": {
+    "enabled": true,
+    "mode": "deferred"
+  },
+  "autofix": { "enabled": true },
+  "contextInjection": { "enabled": true },
+  "guard": { "enabled": false },
+  "turnSummary": { "enabled": true },
+  "actionableWarnings": {
+    "enabled": true,
+    "includeLspCodeActions": true,
+    "deltaOnly": true,
+    "autoFix": {
+      "enabled": false,
+      "maxFixes": 5
+    }
+  },
+  "tools": { "lazy": true },
+  "ui": { "compactToolLine": true },
+  "turnEnd": { "madge": { "enabled": false } },
+  "ignore": [
+    "**/.git/**",
+    "**/node_modules/**",
+    "**/.venv/**",
+    "**/venv/**",
+    "**/__pycache__/**",
+    "**/.pytest_cache/**",
+    "**/.ruff_cache/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/outputs/**",
+    "**/artifacts/**",
+    "**/tmp/**"
+  ]
+}

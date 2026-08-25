@@ -1,0 +1,28 @@
+{
+  "ignore": [
+    "data/**",
+    "outputs/**",
+    "artifacts/**",
+    "remote_deliveries/**",
+    "tmp/**",
+    "third_party/**",
+    "manuscript/**/*.aux",
+    "manuscript/**/*.fdb_latexmk",
+    "manuscript/**/*.fls",
+    "manuscript/**/*.log",
+    "manuscript/**/*.out",
+    "manuscript/**/*.xdv",
+    ".planning/experiments/runs/**"
+  ],
+  "format": { "enabled": true },
+  "autofix": { "enabled": true },
+  "actionableWarnings": {
+    "autoFix": { "enabled": false }
+  },
+  "maxProjectFiles": 5000,
+  "reviewGraph": { "maxFiles": 12000 },
+  "rules": {
+    "high-complexity": { "threshold": 20 },
+    "high-fan-out": { "threshold": 30 }
+  }
+}

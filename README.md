@@ -1,465 +1,207 @@
-# 我的 Pi Coding Agent 配置
+# Jacky's Pi Workflow
 
+[![Pi](https://img.shields.io/badge/Pi-0.84.3-8A2BE2)](https://pi.dev)
+[![Packages](https://img.shields.io/badge/packages-17-blue)](manifest/packages.json)
+[![MCP](https://img.shields.io/badge/MCP-2-orange)](config/mcp/servers.json)
 [![License: MIT](https://img.shields.io/badge/license-MIT-success)](LICENSE)
-[![Pi](https://img.shields.io/badge/Pi-latest-8A2BE2)](https://pi.dev)
-[![Plugins](https://img.shields.io/badge/plugins-17-blue)](#六插件目录17个按用途分组)
-[![Skills](https://img.shields.io/badge/skills-18-green)](#七全局-skill-清单18个)
-[![MCP](https://img.shields.io/badge/MCP-2-orange)](#八mcp-server2个)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#五快速上手3步)
-[![GitHub stars](https://img.shields.io/github/stars/Jacky1n7/pi-config?style=social)](https://github.com/Jacky1n7/pi-config/stargazers)
-[![Last Commit](https://img.shields.io/github/last-commit/Jacky1n7/pi-config)](https://github.com/Jacky1n7/pi-config/commits)
-[![Source](https://img.shields.io/badge/source-GitHub-black)](https://github.com/Jacky1n7/pi-config)
 
-<!-- ASCII 渲染测试：下面的 banner 用 Unicode 块字符，测试 GitHub 等宽渲染 -->
+这是我的个人 Pi 配置与科学 ML/CV 工作流仓库。它不再是“安装一堆最新版插件”的脚本，而是一套**锁版本、可审计、可 dry-run、可备份回滚、可按项目覆盖**的配置即代码方案。
 
-```
-██████╗ ██╗     ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
-██╔══██╗██║    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
-██████╔╝██║    ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
-██╔═══╝ ██║    ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
-██║     ██║    ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
-╚═╝     ╚═╝     ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
-                                                               
-   17 plugins · 18 global skills · 2 MCP servers · one-line installer
-```
+重点适配：
 
-一份可直接复刻的 [Pi](https://pi.dev) 配置，整理成教程形式分享。包含 **17 个插件、18 个全局 Skill、2 个 MCP server**，配一键安装脚本。
+- [`plant-geometry-phenotyping-lab`](templates/plant-geometry-phenotyping-lab)：植物多视角三维重建、GeoProMatch、3DGS artifact contract、器官身份与表型评估、论文证据链。
+- [`smart-beekeeping-challenge-cup`](templates/smart-beekeeping-challenge-cup)：蜜蜂 YOLO 检测、BeeTracker、行为量化、CVAT、AutoDL GPU 训练和 Windows 黑盒交付。
 
-仓库里的每样东西都经过实际使用筛选，目标是把 Pi 打造成一个能多代理协作、能省 token、能跑浏览器的全能终端编码代理。
+## 核心原则
 
----
+1. 全局 `AGENTS.md` 只放稳定的跨项目规则；项目事实、命令和科研约束放项目 `AGENTS.md`。
+2. Extension、Skill、MCP 都按可执行供应链依赖管理；17 个 Pi 包和 2 个 MCP server 使用精确版本。
+3. 禁止无人值守 `pi update --all`。升级必须更新 lock manifest、审查、验证、提交后再 apply。
+4. 安装器只管理明确文件/键，不读取或复制 `auth.json`、provider credential、session、memory、cache、日志或真实 MCP token/env/header。
+5. 每次 apply 先备份到 `${XDG_STATE_HOME:-~/.local/state}/pi-config/backups/`，支持按 transaction 回滚。
+6. 科学/ML结果必须绑定代码、脏工作树、数据/切分、配置、种子、环境/硬件、指标口径和产物哈希。
 
-## 一、Pi 是什么？
-
-[Pi](https://pi.dev)（npm 包 `@earendil-works/pi-coding-agent`）是一个开源的终端 AI 编码代理。你给它一个任务，它在你本地的项目里读写文件、跑命令、调用工具来完成任务。
-
-如果你还没装 Pi，先：
+## 快速开始
 
 ```bash
-npm install -g @earendil-works/pi-coding-agent
-```
-
-然后跑 `pi` 进入交互界面。本仓库的所有插件都假设你已经有一个能正常工作的 Pi。
-
----
-
-## 二、Pi 的整体架构
-
-理解架构有助于你挑选和编写插件。Pi 是一个**插件驱动的代理循环**，核心分层：
-
-```
-┌─────────────────────────────────────────────────────┐
-│  TUI / RPC / Print   ← 用户交互层（终端界面 / API）  │
-├─────────────────────────────────────────────────────┤
-│  Agent Loop          ← 代理循环：收 prompt → 调模型  │
-│                         → 执行工具 → 回传结果         │
-├─────────────────────────────────────────────────────┤
-│  Providers / Models  ← 多模型抽象：OpenAI / Anthropic │
-│                         / 本地 / 自定义 provider      │
-├─────────────────────────────────────────────────────┤
-│  Tools               ← 模型可调用的工具：bash/read/   │
-│                         edit/web_search/mcp/自定义    │
-├─────────────────────────────────────────────────────┤
-│  Extensions          ← TypeScript 模块，能订阅事件、  │
-│                         注册工具/命令/快捷键/主题      │
-├─────────────────────────────────────────────────────┤
-│  Skills / Prompts    ← Markdown 形式的「过程知识」，  │
-│                         按需注入到模型上下文           │
-├─────────────────────────────────────────────────────┤
-│  Themes              ← JSON 配色方案                  │
-├─────────────────────────────────────────────────────┤
-│  Packages            ← 上面这些资源的分发单位          │
-│                         （npm / git / 本地路径）       │
-└─────────────────────────────────────────────────────┘
-```
-
-**关键概念：**
-
-- **Extension（扩展）**：TypeScript 模块，最强力的改造方式。能订阅生命周期事件（如 `tool_call` 可以拦截/修改/阻止工具调用）、注册自定义工具、注册命令、改系统提示词、自定义渲染。
-- **Skill（技能）**：一个 `SKILL.md` 文件，描述「某类任务怎么做」。模型按需加载，跨会话存活。Pi 实现了 [Agent Skills 标准](https://agentskills.io/specification)，所以 Claude Code / OpenAI Codex 的 skill 也能直接用。
-- **Prompt（提示模板）**：可复用的 `.md` 模板，用 `/template` 唤起。
-- **Theme（主题）**：JSON 配色文件。
-- **Package（包）**：把上面这些打包，通过 npm / git / 本地路径分发。`pi install` 就是装包。
-
-**代理循环的大致流程：**
-
-1. 用户输入 prompt
-2. `before_agent_start` 事件（扩展可注入消息 / 改系统提示词）
-3. 进入 turn 循环：调模型 → 模型可能调用工具 → `tool_call` 事件（可拦截）→ 执行工具 → `tool_result` 事件（可改结果）→ 回传给模型
-4. 模型不再调工具 → `agent_end` → `agent_settled`
-
-扩展可以挂在任何一个环节上。
-
----
-
-## 三、Pi 的生态与包市场
-
-### 包市场（pi.dev/packages）
-
-Pi 有一个官方的 [包市场](https://pi.dev/packages)，所有在 `package.json` 里带 `pi-package` 关键字的 npm 包都会自动出现在上面。每个包页面会展示版本、下载量、依赖、仓库链接、甚至 demo 视频/截图。
-
-在 Pi 里也可以直接搜包：
-
-```bash
-# 用 pi-marketplace 扩展（本仓库已装）
-# 或命令行：
-pi install npm:@some/package
-```
-
-### 三种包来源
-
-| 来源 | 格式 | 说明 |
-| --- | --- | --- |
-| npm | `npm:@scope/pkg@1.2.3` | 最常见，版本可 pin |
-| git | `git:github.com/user/repo@v1` | 适合私有 / 未发布的包，SSH/HTTPS 都行 |
-| 本地路径 | `/abs/path` 或 `./rel/path` | 开发调试用 |
-
-### 配置文件位置
-
-| 文件 | 作用 |
-| --- | --- |
-| `~/.pi/agent/settings.json` | 全局设置：packages 列表、主题、默认模型等 |
-| `~/.pi/agent/tools.json` | 工具开关：哪些工具 active / inactive |
-| `~/.pi/agent/models.json` | provider 和模型定义 |
-| `~/.pi/agent/extensions/*.ts` | 全局自定义扩展（auto-discover，支持 `/reload`） |
-| `~/.agents/skills/` | 全局自定义 skill |
-| `~/.config/mcp/mcp.json` | MCP server 配置 |
-| `.pi/settings.json` | 项目级设置（可跟团队共享） |
-| `.pi/extensions/` | 项目级扩展 |
-
----
-
-## 四、如何改造 / 扩展 Pi
-
-Pi 提供了从轻到重三档改造方式，按你的需求选：
-
-### 轻量：写一个 Skill
-
-最简单的扩展。在 `~/.agents/skills/my-skill/SKILL.md` 写一个 markdown，描述某类任务的标准流程。模型会按需加载它。本仓库的 `chrome-devtools` skill 就是这种形式。
-
-适合：沉淀「怎么调试某个框架」「怎么发版」这类流程知识，零代码。
-
-### 中量：装 / 写 MCP Server
-
-MCP（Model Context Protocol）是跨 agent 的工具协议。你写一个 MCP server（任何语言），在 `~/.config/mcp/mcp.json` 注册，Pi 通过 `pi-mcp-adapter` 把它的工具接进来。本仓库的 `context7`、`chrome-devtools` 两个 MCP 就是这么接的。
-
-适合：接入外部服务（数据库、API、浏览器、文档源），工具跨 agent 复用。
-
-### 重量：写一个 Extension
-
-最强力的改造。创建 `~/.pi/agent/extensions/my-ext.ts`：
-
-```typescript
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { Type } from "typebox";
-
-export default function (pi: ExtensionAPI) {
-  // 拦截危险命令
-  pi.on("tool_call", async (event, ctx) => {
-    if (event.toolName === "bash" && event.input.command?.includes("rm -rf")) {
-      const ok = await ctx.ui.confirm("危险!", "允许 rm -rf?");
-      if (!ok) return { block: true, reason: "用户阻止" };
-    }
-  });
-
-  // 注册自定义工具
-  pi.registerTool({
-    name: "greet",
-    label: "Greet",
-    description: "按名字打招呼",
-    parameters: Type.Object({ name: Type.String() }),
-    async execute(_id, params) {
-      return { content: [{ type: "text", text: `Hello, ${params.name}!` }] };
-    },
-  });
-
-  // 注册命令
-  pi.registerCommand("hello", {
-    description: "打招呼",
-    handler: async (_args, ctx) => ctx.ui.notify("Hello!", "info"),
-  });
-}
-```
-
-测试：`pi -e ./my-ext.ts`；正式用放 `~/.pi/agent/extensions/` 然后 `/reload`。
-
-适合：权限门禁、git checkpoint、自定义 compaction、外部集成、有状态工具。能订阅的事件覆盖了 session / agent / message / tool / model / provider 全生命周期。
-
-### 打包分发
-
-写好后加个 `package.json`，声明 `pi` manifest 和 `pi-package` 关键字，发到 npm 就成：
-
-```json
-{
-  "name": "my-pi-ext",
-  "keywords": ["pi-package"],
-  "pi": { "extensions": ["./extensions"], "skills": ["./skills"] }
-}
-```
-
-然后 `pi install npm:my-pi-ext`，别人就能用你的扩展了。
-
----
-
-## 五、快速上手（3 步）
-
-```bash
-# 1. 克隆维护分支
 git clone https://github.com/Jacky1n7/pi-config.git
 cd pi-config
 
-# 2. 一键安装（17 个自动更新 Pi 包 + UI 默认项 + 2 个 MCP）
-bash install.sh
+# 1. 只打印计划，不修改系统
+./install.sh
 
-# 3. 重启 pi，让所有插件和 MCP server 生效
+# 2. 应用 Jacky 的模型/UI profile；已安装且版本正确时可跳过包安装
+./install.sh --apply --profile jacky
+
+# 当前机器已经是锁定版本时
+./install.sh --apply --profile jacky --skip-packages
+
+# 3. 验证仓库与实际安装
+./scripts/check.sh
+./scripts/check.sh --installed --profile jacky
 ```
 
-脚本会安装 17 个包的当前最新版，启用 ast-grep、SQLite/FTS5 和 macOS 文件监听所需的已审核 npm 安装脚本，并合并 UI 与 MCP 配置。已有的 provider、model、登录信息、自定义扩展和其他 MCP server 都会保留。
-
-在 macOS 上，安装脚本还会注册用户级自动更新任务：登录时运行一次，此后每 6 小时执行 `pi update --all`，同时更新 Pi 主程序和全部扩展。两个 MCP server 使用 `@latest`，每次懒启动时解析最新版。Pi 主程序更新后可能覆盖汉化，需要重新应用汉化补丁。
-
-> 需要 Node.js 22.5 或更高版本；脚本会在修改前做版本检查。
-
-> 安装完之后，模型的 provider / key 还需要你自己用 `pi config` 配一下——这部分因人而异，不在本仓库范围内。
-
----
-
-## 六、插件目录（17 个，按用途分组）
-
-下面逐个讲清楚每个插件是干嘛的、为什么选它，并附上仓库地址方便你深挖。
-
-### 🤖 代理编排与工作流
-
-#### `pi-subagents`
-
-子代理委派框架。让主代理可以把任务派给子代理，支持五种工作模式：
-
-- **single**：单个子代理独立完成一个任务
-- **chain**：多个子代理串成流水线，前一个的输出喂给后一个
-- **parallel**：多个子代理并行跑同一类任务
-- **async**：后台异步执行，完成后通知
-- **forked-context**：从父会话 fork 出独立上下文
-
-适合做「先让一个代理研究、再让另一个代理实现、最后让第三个代理 review」这种复杂流程。配带一个 `pi-subagents` skill 教模型怎么编排。
-
-- 📦 仓库：<https://github.com/nicobailon/pi-subagents>
-
-#### `@narumitw/pi-goal`
-
-目标驱动模式。用 `/goal` 设一个目标，Pi 会自主推进直到完成，中途遇到阻塞会主动停下来等你。适合那种「给我做完这个 feature」的长任务。
-
-- 📦 仓库：<https://github.com/narumiruna/pi-extensions>
-
-#### `@narumitw/pi-plan-mode`
-
-只读的计划模式（类似 Codex 的 read-only collaboration）。让模型先出方案、跟你讨论清楚，再进入执行。避免一上来就乱改文件。
-
-- 📦 仓库：<https://github.com/narumiruna/pi-extensions>
-
-### 🔍 代码智能与上下文管理
-
-#### `pi-lens`
-
-Pi 的「IDE 眼睛」。给 Pi 加上 AST 级别的代码理解能力：
-
-- 基于 **ast-grep** 的结构化搜索 / 替换（比纯文本 grep 精准）
-- 基于 **tree-sitter** 的语法规则检查
-- **LSP 诊断**：跑构建前主动查类型错误
-- 符号搜索、模块报告、读符号体等「廉价读代码」工具
-
-配套 4 个 skill：`pi-lens-ast-grep`、`pi-lens-lsp-navigation`、`pi-lens-write-ast-grep-rule`、`pi-lens-write-tree-sitter-rule`（教你写自定义规则）。
-
-- 📦 仓库：<https://github.com/apmantza/pi-lens>
-
-#### `context-mode`
-
-省 token 的核心插件。把大输出（日志、构建结果、网页内容、git diff 等）路由进一个沙箱，用代码处理，只把摘要返回给模型。内置一个 **FTS5 全文检索知识库**，可以索引文档、网页、历史会话，之后按需检索。
-
-效果：分析 47 个源文件，直接 read 要烧 ~700KB 上下文；走 context-mode 只回 ~3.6KB。配套 8 个 skill（ctx-search / ctx-index / ctx-stats / ctx-purge / ctx-insight / ctx-doctor / ctx-upgrade / context-mode 本体）。
-
-- 📦 仓库：<https://github.com/mksglu/context-mode>
-
-#### `pi-hermes-memory`
-
-跨会话记忆。让 Pi 记住你之前告诉过它的事（你的偏好、项目约定、之前踩过的坑），下次开新会话还能用上。记忆分 user / memory / project / failure 四类，可搜索。默认基于策略的 token 感知记忆，带 SQLite FTS5 检索 + 自动合并。
-
-- 📦 仓库：<https://github.com/chandra447/pi-hermes-memory>
-
-### 🌐 浏览、检索与外部接入
-
-#### `pi-web-access`
-
-Web 访问全家桶：
-
-- **web_search**：多引擎网页搜索（OpenAI / Brave / Exa / Tavily / Perplexity / Gemini）
-- **fetch_content**：抓 URL 内容转 markdown，支持 YouTube 转录、GitHub 仓库克隆、PDF 提取、本地视频抽帧
-- 配带 `librarian` skill：带 GitHub 永链的库研究，适合深挖某个开源库的内部实现
-- 📦 仓库：<https://github.com/nicobailon/pi-web-access>
-
-#### `pi-playwright`
-
-Playwright 浏览器自动化。让 Pi 能开浏览器、填表单、点按钮、截图、查 console / network。配带 `playwright-browser` skill。适合测 Web 应用、做端到端自动化。
-
-- 📦 仓库：<https://github.com/guwidoe/pi-playwright>
-
-#### `pi-mcp-adapter`
-
-MCP（Model Context Protocol）适配器。让 Pi 能连接任何 MCP server，把它的工具接进来。本仓库的 2 个 MCP server 就是通过它生效的。支持 OAuth、安全审查、按需懒启动。
-
-- 📦 仓库：<https://github.com/nicobailon/pi-mcp-adapter>
-
-#### `pi-marketplace`
-
-Pi 包市场入口。在 Pi 里直接搜索、查看详情、安全审计、安装 npm 上的 pi 包。配套 `marketplace_search` / `marketplace_detail` / `marketplace_audit` / `marketplace_install` 工具。发现新插件很方便。
-
-- 📦 仓库：<https://pi.dev/packages/pi-marketplace>
-
-### ✨ 实用工具与主题
-
-#### `@juicesharp/rpiv-todo`
-
-给模型的 todo list，渲染成实时浮层，**扛得住 `/reload` 和会话压缩**。多步骤任务进度可视化，不容易跑偏。
-
-- 📦 仓库：<https://github.com/juicesharp/rpiv-mono>
-
-#### `@narumitw/pi-statusline`
-
-状态栏增强。替换 Pi 默认 footer，在底部显示模型、上下文占用、git 状态等更丰富的信息，一眼看清当前状态。
-
-- 📦 仓库：<https://github.com/narumiruna/pi-extensions>
-
-#### `@narumitw/pi-github-pr`
-
-在 Pi 里看 GitHub PR 的 review / checks / comment 状态，不用切浏览器。
-
-- 📦 仓库：<https://github.com/narumiruna/pi-extensions>
-
-#### `pi-simplify`
-
-审最近改动的代码，从清晰度、一致性、可维护性角度给建议。改完代码跑一下，把烂味道扫干净。
-
-- 📦 仓库：<https://github.com/MattDevy/pi-extensions>
-
-#### `@firstpick/pi-prompts-git-pr`
-
-一套可复用的 prompt 模板：提交信息、PR 描述、PR review 流程。直接 `/` 唤起对应模板，省得每次手敲。
-
-- 📦 仓库：<https://github.com/Firstp1ck/pi-coding-agent-forge>
-
-#### `@firstpick/pi-skill-deep-research`
-
-带 `deep-research` skill：两阶段严谨研究流程，带 schema / policy 校验。适合需要多源证据、事实核查的高 stakes 研究。
-
-- 📦 仓库：<https://github.com/Firstp1ck/pi-coding-agent-forge>
-
-#### `@victor-software-house/pi-curated-themes`
-
-精选暗色终端主题集（从 iTerm2-Color-Schemes 迁移），含我用的 `github-dark-colorblind`。还带 `adapt-ghostty-theme-to-pi` skill：把 Ghostty 终端主题迁移成 Pi 主题。
-
-- 📦 仓库：<https://github.com/victor-software-house/pi-curated-themes>
-
----
-
-## 七、全局 Skill 清单（18 个）
-
-所有 skill 都是全局的——装了包就处处可用，跟当前在哪个项目无关。
-
-| 类别 | Skill | 来源包 |
-| --- | --- | --- |
-| 研究/浏览 | `librarian`、`deep-research`、`chrome-devtools` | pi-web-access / @firstpick / 自定义 |
-| 浏览器 | `playwright-browser` | pi-playwright |
-| 上下文/知识库 | `context-mode`、`ctx-search`、`ctx-index`、`ctx-stats`、`ctx-purge`、`ctx-insight`、`ctx-doctor`、`ctx-upgrade` | context-mode |
-| 代码智能 | `pi-lens-ast-grep`、`pi-lens-lsp-navigation`、`pi-lens-write-ast-grep-rule`、`pi-lens-write-tree-sitter-rule` | pi-lens |
-| 代理编排 | `pi-subagents` | pi-subagents |
-| 主题 | `adapt-ghostty-theme-to-pi` | @victor-software-house |
-
-> 其中 `chrome-devtools` 是我放在 `~/.agents/skills/` 的自定义全局 skill，不在任何 npm 包里，需要自己创建（参考第二节「写一个 Skill」）。
-
----
-
-## 八、MCP Server（2 个）
-
-配置在 `mcp.json`，安装脚本会合并到 `~/.config/mcp/mcp.json`。
-
-### `context7`
-
-Upstash 的 Context7 MCP。给模型实时拉取第三方库的**最新文档**，避免它用过时的训练知识写代码。
-
-```json
-{
-  "command": "npx",
-  "args": ["-y", "@upstash/context7-mcp@latest"],
-  "lifecycle": "lazy"
-}
+修改 context files、Prompts 或 Skills 后，重启 Pi 或运行 `/reload`。
+
+### 应用重点项目模板
+
+```bash
+# 先 dry-run
+./scripts/apply-project.sh plant-geometry-phenotyping-lab \
+  ~/plant-geometry-phenotyping-lab
+./scripts/apply-project.sh smart-beekeeping-challenge-cup \
+  ~/挑战杯智慧养蜂项目
+
+# 审查计划后应用
+./scripts/apply-project.sh plant-geometry-phenotyping-lab \
+  ~/plant-geometry-phenotyping-lab --apply
+./scripts/apply-project.sh smart-beekeeping-challenge-cup \
+  ~/挑战杯智慧养蜂项目 --apply
 ```
 
-### `chrome-devtools`
+项目模板会：
 
-Chrome DevTools 远程控制，可用于点击、截图、网络抓包和性能分析。通过 `npx @latest` 按需启动，不再依赖其他用户的本地绝对路径，并默认关闭使用统计。
+- 合并项目 `.pi/` Prompts/Skills/Settings；
+- 安装 `.pi-lens.json`；
+- 在根 `AGENTS.md` 中维护一个带 marker 的 Pi workflow 区块；
+- 修改前创建独立 transaction backup；
+- 不碰项目代码、原始数据、模型、训练产物和用户其他未提交改动。
 
-```json
-{
-  "command": "npx",
-  "args": ["-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"],
-  "lifecycle": "lazy"
-}
+新增 `.pi` 资源后，Pi 首次进入仓库会要求 project trust；这是预期的安全边界。
+
+## 配置结构
+
+```text
+manifest/packages.json              # 17 个 Pi package 精确版本，唯一来源
+config/pi/settings.defaults.json    # 通用非密钥默认项
+config/pi/settings.jacky.json       # Jacky 的模型/UI profile
+config/mcp/servers.json             # 精确版本 MCP 命令
+config/pi-lens/config.json          # 全局 Pi Lens 基线
+global/AGENTS.md                    # 全局上下文规则
+global/prompts/                     # /debug /test-fix /release-check /handoff
+global/skills/scientific-ml-experiment/
+templates/plant-geometry-phenotyping-lab/
+templates/smart-beekeeping-challenge-cup/
+scripts/pi_config.py                # apply/check/rollback 实现
+scripts/check.sh
+scripts/apply-project.sh
+scripts/rollback.sh
 ```
 
-两个都设了 `"lifecycle": "lazy"`——按需启动，不常驻，省资源。
+兼容入口 `install.sh`、`update.sh`、`mcp.json`、`settings.defaults.json` 仍保留。`config.json` 只是人类可读索引，不再复制 package 清单。
 
----
+## 17 个锁定 Pi 包
 
-## 九、仓库内容
-
-| 文件 | 说明 |
+| 领域 | 包 |
 | --- | --- |
-| `install.sh` | 一键安装脚本：装 17 个插件 + 合并 MCP 配置 |
-| `config.json` | 机器可读的完整配置（plugins / globalSkills / mcpServers / UI / tools） |
-| `mcp.json` | MCP server 配置，可直接放到 `~/.config/mcp/mcp.json` |
-| `settings.defaults.json` | 不包含模型或密钥的 Pi 界面默认项 |
-| `README.md` | 本文件 |
+| 编排 | `pi-subagents@0.56.0`、`@narumitw/pi-plan-mode@0.55.0`、`@narumitw/pi-goal@0.54.0`、`@juicesharp/rpiv-todo@2.7.1` |
+| 代码质量 | `pi-lens@4.1.2`、`pi-simplify@0.2.3` |
+| 上下文与记忆 | `context-mode@1.0.169`、`pi-hermes-memory@0.9.6` |
+| Web/MCP/浏览器 | `pi-web-access@0.24.2`、`pi-mcp-adapter@2.27.0`、`pi-playwright@0.1.1` |
+| Git/PR/UI | `@narumitw/pi-github-pr@0.49.6`、`@firstpick/pi-prompts-git-pr@0.1.6`、`@narumitw/pi-statusline@0.49.13` |
+| 研究/生态/主题 | `@firstpick/pi-skill-deep-research@0.1.9`、`pi-marketplace@0.1.3`、`@victor-software-house/pi-curated-themes@0.2.1` |
 
----
+机器可读详情见 [`manifest/packages.json`](manifest/packages.json)。
 
-## 十、装完之后怎么用
+## 工具选择约定
 
-1. **先配模型**：跑 `pi config`，加你自己的 provider 和模型。本仓库不涉及这部分。
-2. **重启 Pi**：让新装的插件和 MCP server 生效。
-3. **试试 skill**：在 Pi 里直接描述任务，模型会自动匹配合适的 skill；也可以用 `/context-mode:ctx-stats` 这类斜杠命令手动调。
-4. **调工具开关**（可选）：Pi 的 `tools.json` 可以把不常用工具设为 inactive，保持工具列表干净。我个人的做法是把 `ast_grep_*` / `grep` / `find` / `ls` / `lsp_navigation` 设为 inactive，需要时通过 `pi_lens_activate_tools` 按需唤起。`config.json` 里有我的完整 tools 配置可参考。
+- 本地事实：代码、测试、配置、Git、项目文档。
+- 最新库/API文档：Context7。
+- 一般网页研究和内容抓取：Web Access。
+- 重复浏览器交互：Playwright。
+- Console、Network、性能与 Lighthouse：Chrome DevTools MCP。
+- 大日志、测试输出、JSON、仓库统计：Context Mode。
+- 多步骤：Todo；只读方案：Plan；自主闭环：Goal；并行侦察/审查：Subagents；重大决策交叉质询：Council。
 
----
+详细规则由 [`global/AGENTS.md`](global/AGENTS.md) 安装到 `~/.pi/agent/AGENTS.md`。
 
-## 十一、Star 趋势
+## 项目工作流
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Jacky1n7/pi-config&type=Date)](https://star-history.com/#Jacky1n7/pi-config&Date)
+### Plant Geometry Phenotyping
 
-> 仓库刚建，曲线会随 star 增长实时更新。点击图片可跳转 star-history 交互页。
+提供：
 
----
+- `/experiment-plan`：植物级独立、冻结切分、直接身份指标、预注册门禁；
+- `/validate-change`：pytest/lint/full test/dry-run 分层验证；
+- `/manuscript-evidence`：论文 claim 与 per-plant artifact 证据核对；
+- `plant-scientific-workflow` Skill；
+- 忽略 data/outputs/artifacts/manuscript build products 的 Pi Lens 配置。
 
-## 十二、贡献活动折线图
+关键边界：不使用人工尺寸在测试阶段选择预测器官；不把 deterministic bootstrap 描述成优化 3DGS；没有显式时变非刚性建模时不声称“4D”。
 
-下面这张 ASCII 折线图由本仓库的真实 `git log` 生成（按小时分桶统计提交数），直接用等宽块字符绘制——既是贡献趋势可视化，也验证 GitHub 的等宽渲染。
+### Smart Beekeeping Challenge Cup
 
+提供：
+
+- `/competition-review`：赛题格式、hidden-test、外部数据与交付合同；
+- `/metric-attestation`：GT policy/split/model/runtime/evaluator hash 指标证明；
+- `/delivery-check`：Windows NVIDIA onedir 黑盒验收；
+- `beekeeping-competition-workflow` Skill；
+- 默认不自动 format/autofix，排除原始视频、训练数据、权重、结果和交付物。
+
+关键边界：原始比赛视频只读；按视频/片段切分，禁止相邻帧随机泄漏；Mac 检查、AutoDL GPU 评测和 Windows 黑盒验收必须明确区分。
+
+## 更新策略
+
+```bash
+# 默认只检查实际安装是否与锁一致
+./update.sh
+
+# 重新同步到仓库锁，不解析 latest
+./update.sh --apply
 ```
-按小时提交分布（2026-07-25）
 
- 4 │      ●─
-   │      ●─
-   │      ●─
-   │      ●─
-   │  ╱   ●─
-   │  ●─  ●─
-    └┴───┴───
-     17:00 18:00
+本仓库不会自动更新 Pi core、Extension 或 MCP。更新流程应当是：
 
-总提交: 5 | 时间跨度: 17:34 → 18:13
+1. 在分支中修改精确版本；
+2. 审查 package 来源和变更；
+3. 在临时 HOME 及真实机器验证；
+4. 运行 npm audit、MCP 连接和项目 smoke checks；
+5. commit/push；
+6. 再运行 `./update.sh --apply`。
+
+旧版的 `com.jacky1n7.pi-config-update` 每 6 小时自动更新任务会在 apply 时卸载删除。`install-auto-update.sh` 现只解释新的显式更新策略。
+
+## 回滚
+
+apply 输出会打印 backup transaction，例如：
+
+```text
+~/.local/state/pi-config/backups/20260825T170000-global
 ```
 
-> 随着提交增加，这张图会按小时/按天自动重绘。生成脚本思路：`git log --pretty=format:%ad` → 按小时分桶 → 用 `●` / `╱` / `─` 画线。
+先预览，再应用回滚：
 
----
+```bash
+./scripts/rollback.sh ~/.local/state/pi-config/backups/<transaction>
+./scripts/rollback.sh ~/.local/state/pi-config/backups/<transaction> --apply
+```
+
+回滚仅恢复 transaction 清单中的路径，不删除无关 package、Prompt、Skill 或 MCP server。
+
+## 安全与验证
+
+```bash
+# 仓库 JSON、Skill frontmatter、版本 pin、凭据文件检查
+./scripts/check.sh
+
+# Shell/Python 语法
+bash -n install.sh update.sh install-auto-update.sh scripts/*.sh
+python3 -m py_compile scripts/pi_config.py
+
+# 实际安装漂移
+./scripts/check.sh --installed --profile jacky
+
+# 两个重点项目与模板的漂移
+./scripts/check-project.sh plant-geometry-phenotyping-lab ~/plant-geometry-phenotyping-lab
+./scripts/check-project.sh smart-beekeeping-challenge-cup ~/挑战杯智慧养蜂项目
+```
+
+第三方 Extension 具有当前用户权限；npm audit 为 0 不等于代码无恶意。新增 package 仍应通过 Pi Marketplace 审计和人工确认。MCP 使用精确命令版本，不存储 credential。
+
+## 设计依据
+
+参见 [`docs/research-sources.md`](docs/research-sources.md)。主要依据包括 Pi 官方文档、[AGENTS.md](https://agents.md/)、OpenAI Codex AGENTS 指南、PyTorch/pytest/Ruff、DVC/MLflow、MCP 安全规范和 GitHub 大文件指南。
 
 ## License
 

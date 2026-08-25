@@ -1,12 +1,24 @@
-# OS
+# OS / editor
 .DS_Store
-
-# editor
 *.swp
 .vscode/
 
-# 不要把真实的 pi 配置/密钥误提交
+# Never commit live credentials, local state, backups, caches, or exported homes
 .env
+.env.*
 *secret*
 *api*key*
+auth.json
+credentials.json
+settings.local.json
 real-config/
+backups/
+state/
+logs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/

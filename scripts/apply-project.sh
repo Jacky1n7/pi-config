@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ $# -lt 2 ]]; then
+  echo "Usage: $0 <plant-geometry-phenotyping-lab|smart-beekeeping-challenge-cup> <repo-path> [--apply]" >&2
+  exit 2
+fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec python3 "$SCRIPT_DIR/pi_config.py" apply-project "$@"
