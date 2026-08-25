@@ -1,14 +1,14 @@
 # 我的 Pi Coding Agent 配置
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-success)](LICENSE)
-[![Pi](https://img.shields.io/badge/Pi-0.82.0-8A2BE2)](https://pi.dev)
+[![Pi](https://img.shields.io/badge/Pi-0.84.3-8A2BE2)](https://pi.dev)
 [![Plugins](https://img.shields.io/badge/plugins-17-blue)](#六插件目录17个按用途分组)
 [![Skills](https://img.shields.io/badge/skills-18-green)](#七全局-skill-清单18个)
 [![MCP](https://img.shields.io/badge/MCP-2-orange)](#八mcp-server2个)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#五快速上手3步)
-[![GitHub stars](https://img.shields.io/github/stars/realchendahuang/pi-config?style=social)](https://github.com/realchendahuang/pi-config/stargazers)
-[![Last Commit](https://img.shields.io/github/last-commit/realchendahuang/pi-config)](https://github.com/realchendahuang/pi-config/commits)
-[![Source](https://img.shields.io/badge/source-GitHub-black)](https://github.com/realchendahuang/pi-config)
+[![GitHub stars](https://img.shields.io/github/stars/Jacky1n7/pi-config?style=social)](https://github.com/Jacky1n7/pi-config/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/Jacky1n7/pi-config)](https://github.com/Jacky1n7/pi-config/commits)
+[![Source](https://img.shields.io/badge/source-GitHub-black)](https://github.com/Jacky1n7/pi-config)
 
 <!-- ASCII 渲染测试：下面的 banner 用 Unicode 块字符，测试 GitHub 等宽渲染 -->
 
@@ -204,17 +204,19 @@ export default function (pi: ExtensionAPI) {
 ## 五、快速上手（3 步）
 
 ```bash
-# 1. 克隆本仓库
-git clone https://github.com/realchendahuang/pi-config.git
+# 1. 克隆维护分支
+git clone https://github.com/Jacky1n7/pi-config.git
 cd pi-config
 
-# 2. 一键安装（装 17 个插件 + 合并 MCP 配置）
+# 2. 一键安装（17 个锁版 Pi 包 + UI 默认项 + 2 个 MCP）
 bash install.sh
 
 # 3. 重启 pi，让所有插件和 MCP server 生效
 ```
 
-脚本会自动把 17 个插件用 `pi install` 装好，并把 2 个 MCP server 的配置合并进 `~/.config/mcp/mcp.json`（如果该文件已存在，会保留你已有的 server，只做合并）。
+脚本会自动安装经 Pi 0.84.3 实测的锁版包，启用 ast-grep、SQLite/FTS5 和 macOS 文件监听所需的已审核 npm 安装脚本，并合并 UI 与 MCP 配置。已有的 provider、model、登录信息、自定义扩展和其他 MCP server 都会保留。
+
+> 需要 Node.js 22.5 或更高版本；脚本会在修改前做版本检查。
 
 > 安装完之后，模型的 provider / key 还需要你自己用 `pi config` 配一下——这部分因人而异，不在本仓库范围内。
 
@@ -384,16 +386,22 @@ Upstash 的 Context7 MCP。给模型实时拉取第三方库的**最新文档**�
 ```json
 {
   "command": "npx",
-  "args": ["-y", "@upstash/context7-mcp@latest"],
+  "args": ["-y", "@upstash/context7-mcp@4.0.3"],
   "lifecycle": "lazy"
 }
 ```
 
 ### `chrome-devtools`
 
-Chrome DevTools 远程控制，29 个工具（点击、截图、网络抓包、性能分析等）。配合 `chrome-devtools` skill 调试网页很顺手。
+Chrome DevTools 远程控制，可用于点击、截图、网络抓包和性能分析。通过锁版 `npx` 按需启动，不再依赖其他用户的本地绝对路径，并默认关闭使用统计。
 
-> 这个 server 需要本地装一个 `chrome-devtools-mcp` 二进制，路径在 `mcp.json` 里是写死的，换机器后请改成你自己的路径。
+```json
+{
+  "command": "npx",
+  "args": ["-y", "chrome-devtools-mcp@1.8.0", "--no-usage-statistics"],
+  "lifecycle": "lazy"
+}
+```
 
 两个都设了 `"lifecycle": "lazy"`——按需启动，不常驻，省资源。
 
@@ -406,6 +414,7 @@ Chrome DevTools 远程控制，29 个工具（点击、截图、网络抓包、�
 | `install.sh` | 一键安装脚本：装 17 个插件 + 合并 MCP 配置 |
 | `config.json` | 机器可读的完整配置（plugins / globalSkills / mcpServers / UI / tools） |
 | `mcp.json` | MCP server 配置，可直接放到 `~/.config/mcp/mcp.json` |
+| `settings.defaults.json` | 不包含模型或密钥的 Pi 界面默认项 |
 | `README.md` | 本文件 |
 
 ---
@@ -421,7 +430,7 @@ Chrome DevTools 远程控制，29 个工具（点击、截图、网络抓包、�
 
 ## 十一、Star 趋势
 
-[![Star History Chart](https://api.star-history.com/svg?repos=realchendahuang/pi-config&type=Date)](https://star-history.com/#realchendahuang/pi-config&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Jacky1n7/pi-config&type=Date)](https://star-history.com/#Jacky1n7/pi-config&Date)
 
 > 仓库刚建，曲线会随 star 增长实时更新。点击图片可跳转 star-history 交互页。
 

@@ -2,11 +2,12 @@
   "mcpServers": {
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "args": ["-y", "@upstash/context7-mcp@4.0.3"],
       "lifecycle": "lazy"
     },
     "chrome-devtools": {
-      "command": "/Users/kim/.config/opencode/bin/chrome-devtools-mcp",
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@1.8.0", "--no-usage-statistics"],
       "lifecycle": "lazy"
     }
   }

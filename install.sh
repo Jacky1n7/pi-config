@@ -1,60 +1,107 @@
 #!/usr/bin/env bash
-# 一键安装我的 Pi 配置：19 个插件 + 2 个 MCP server
-# 不含供应商/模型/key —— 那些请用 `pi config` 自行配置
+# Pi 0.84.3 全量中文配置：17 个锁版 Pi 包 + 2 个懒启动 MCP server。
+# 不读取或修改 auth.json，不覆盖已有 provider/model 配置。
 set -euo pipefail
 
-echo "📦 安装 17 个 Pi 插件包..."
-PACKAGES=(
-	pi-subagents
-	pi-mcp-adapter
-	pi-web-access
-	pi-lens
-	context-mode
-	pi-hermes-memory
-	@juicesharp/rpiv-todo
-	@narumitw/pi-statusline
-	pi-marketplace
-	@narumitw/pi-github-pr
-	@narumitw/pi-plan-mode
-	@narumitw/pi-goal
-	pi-playwright
-	pi-simplify
-	@firstpick/pi-prompts-git-pr
-	@firstpick/pi-skill-deep-research
-	@victor-software-house/pi-curated-themes
-)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PI_AGENT_DIR="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
+MCP_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/mcp"
+MCP_FILE="$MCP_DIR/mcp.json"
 
-for pkg in "${PACKAGES[@]}"; do
-	echo "  → pi install npm:$pkg"
-	pi install "npm:$pkg" || echo "    ⚠️  安装失败: $pkg（可稍后重试）"
+for command_name in pi node npm npx; do
+	if ! command -v "$command_name" >/dev/null 2>&1; then
+		echo "✗ 缺少必需命令: $command_name" >&2
+		exit 1
+	fi
 done
 
-echo ""
-echo "🔌 配置 MCP servers..."
-MCP_DIR="$HOME/.config/mcp"
-MCP_FILE="$MCP_DIR/mcp.json"
-mkdir -p "$MCP_DIR"
+node_major="$(node -p 'process.versions.node.split(".")[0]')"
+if [ "$node_major" -lt 22 ]; then
+	echo "✗ context-mode 需要 Node.js >= 22.5.0，当前为 $(node --version)" >&2
+	exit 1
+fi
 
-# 合并而非覆盖：保留已有的 server
-if [ -f "$MCP_FILE" ]; then
-	echo "  检测到已有 $MCP_FILE，将合并新 server..."
-	node -e '
-    const fs = require("fs");
-    const existing = JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
-    const incoming = JSON.parse(fs.readFileSync(process.argv[2],"utf8"));
-    existing.mcpServers = Object.assign({}, existing.mcpServers||{}, incoming.mcpServers||{});
-    fs.writeFileSync(process.argv[1], JSON.stringify(existing,null,2)+"\n");
-    console.log("  ✓ 已合并 MCP server:", Object.keys(existing.mcpServers).join(", "));
-  ' "$MCP_FILE" "$(dirname "$0")/mcp.json"
-else
-	cp "$(dirname "$0")/mcp.json" "$MCP_FILE"
-	echo "  ✓ 已写入 $MCP_FILE"
+echo "Pi: $(pi --version)"
+echo "Node.js: $(node --version)"
+echo "📦 安装 17 个已验证版本的 Pi 包..."
+PACKAGES=(
+	"pi-subagents@0.56.0"
+	"pi-mcp-adapter@2.27.0"
+	"pi-web-access@0.24.2"
+	"pi-lens@4.1.2"
+	"context-mode@1.0.169"
+	"pi-hermes-memory@0.9.6"
+	"@juicesharp/rpiv-todo@2.7.1"
+	"@narumitw/pi-statusline@0.49.13"
+	"pi-marketplace@0.1.3"
+	"@narumitw/pi-github-pr@0.49.6"
+	"@narumitw/pi-plan-mode@0.55.0"
+	"@narumitw/pi-goal@0.54.0"
+	"pi-playwright@0.1.1"
+	"pi-simplify@0.2.3"
+	"@firstpick/pi-prompts-git-pr@0.1.6"
+	"@firstpick/pi-skill-deep-research@0.1.9"
+	"@victor-software-house/pi-curated-themes@0.2.1"
+)
+
+failed_packages=()
+for package_spec in "${PACKAGES[@]}"; do
+	echo "  → pi install npm:$package_spec"
+	if ! pi install "npm:$package_spec"; then
+		failed_packages+=("$package_spec")
+	fi
+done
+
+if npm install-scripts --help >/dev/null 2>&1; then
+	echo ""
+	echo "🛡️  启用已审核的本地功能依赖..."
+	(
+		cd "$PI_AGENT_DIR/npm"
+		npm install-scripts approve @ast-grep/cli better-sqlite3 context-mode fsevents
+	)
 fi
 
 echo ""
-echo "✅ 安装完成！"
+echo "🎨 合并 Pi 界面默认项..."
+mkdir -p "$PI_AGENT_DIR"
+node - "$PI_AGENT_DIR/settings.json" "$SCRIPT_DIR/settings.defaults.json" <<'NODE'
+const fs = require("node:fs");
+const [targetPath, defaultsPath] = process.argv.slice(2);
+const existing = fs.existsSync(targetPath)
+  ? JSON.parse(fs.readFileSync(targetPath, "utf8"))
+  : {};
+const defaults = JSON.parse(fs.readFileSync(defaultsPath, "utf8"));
+fs.writeFileSync(targetPath, `${JSON.stringify({ ...existing, ...defaults }, null, 2)}\n`);
+console.log(`  ✓ 已保留原配置并合并默认项: ${Object.keys(defaults).join(", ")}`);
+NODE
+
 echo ""
-echo "⚠️  下一步（本脚本不做）："
-echo "   1. 用 \`pi config\` 配置你自己的 provider 和 API key"
-echo "   2. chrome-devtools MCP 需要本地二进制，按 mcp.json 里的路径安装"
-echo "   3. 重启 pi 使所有插件/MCP 生效"
+echo "🔌 合并 2 个 MCP server..."
+mkdir -p "$MCP_DIR"
+node - "$MCP_FILE" "$SCRIPT_DIR/mcp.json" <<'NODE'
+const fs = require("node:fs");
+const [targetPath, incomingPath] = process.argv.slice(2);
+const existing = fs.existsSync(targetPath)
+  ? JSON.parse(fs.readFileSync(targetPath, "utf8"))
+  : {};
+const incoming = JSON.parse(fs.readFileSync(incomingPath, "utf8"));
+existing.mcpServers = {
+  ...(existing.mcpServers || {}),
+  ...(incoming.mcpServers || {}),
+};
+fs.writeFileSync(targetPath, `${JSON.stringify(existing, null, 2)}\n`);
+console.log(`  ✓ MCP servers: ${Object.keys(existing.mcpServers).join(", ")}`);
+NODE
+
+echo ""
+echo "🔎 已安装 Pi 包："
+pi list
+
+if [ "${#failed_packages[@]}" -ne 0 ]; then
+	echo "" >&2
+	echo "✗ 以下包安装失败：${failed_packages[*]}" >&2
+	exit 1
+fi
+
+echo ""
+echo "✅ 全量配置安装完成。重启 Pi 或在现有会话运行 /reload。"
