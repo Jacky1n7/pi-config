@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 在 macOS 上安装用户级 LaunchAgent：登录时及每 6 小时更新 Pi 扩展。
+# 在 macOS 上安装用户级 LaunchAgent：登录时及每 6 小时更新 Pi 主程序和扩展。
 set -euo pipefail
 
 if [ "$(uname -s)" != "Darwin" ]; then
@@ -61,5 +61,5 @@ NODE
 
 launchctl bootout "gui/$UID/$LABEL" >/dev/null 2>&1 || true
 launchctl bootstrap "gui/$UID" "$PLIST_FILE"
-echo "⏱️  自动更新已启用：登录时及每 6 小时检查一次。"
+echo "⏱️  自动更新已启用：登录时及每 6 小时更新 Pi 主程序和扩展。"
 echo "   日志：$LOG_DIR/pi-config-update.log"

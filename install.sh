@@ -62,8 +62,8 @@ if npm install-scripts --help >/dev/null 2>&1; then
 fi
 
 echo ""
-echo "🔄 将所有未锁版扩展更新到当前最新版..."
-pi update --extensions --no-approve
+echo "🔄 将 Pi 主程序和所有未锁版扩展更新到当前最新版..."
+pi update --all --no-approve
 
 echo ""
 echo "🎨 合并 Pi 界面默认项..."

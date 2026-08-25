@@ -216,7 +216,7 @@ bash install.sh
 
 脚本会安装 17 个包的当前最新版，启用 ast-grep、SQLite/FTS5 和 macOS 文件监听所需的已审核 npm 安装脚本，并合并 UI 与 MCP 配置。已有的 provider、model、登录信息、自定义扩展和其他 MCP server 都会保留。
 
-在 macOS 上，安装脚本还会注册用户级自动更新任务：登录时运行一次，此后每 6 小时执行 `pi update --extensions`。两个 MCP server 使用 `@latest`，每次懒启动时解析最新版。为避免覆盖本仓库配套的汉化，后台任务不会自动升级 Pi 主程序；需要时可手动执行 `pi update`，然后重新应用汉化。
+在 macOS 上，安装脚本还会注册用户级自动更新任务：登录时运行一次，此后每 6 小时执行 `pi update --all`，同时更新 Pi 主程序和全部扩展。两个 MCP server 使用 `@latest`，每次懒启动时解析最新版。Pi 主程序更新后可能覆盖汉化，需要重新应用汉化补丁。
 
 > 需要 Node.js 22.5 或更高版本；脚本会在修改前做版本检查。
 

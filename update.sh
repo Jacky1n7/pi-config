@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 更新本仓库管理的 Pi 扩展；不自动升级 Pi 主程序，以保留汉化。
+# 更新 Pi 主程序和本仓库管理的全部扩展。
 set -euo pipefail
 
 PI_AGENT_DIR="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
@@ -12,8 +12,8 @@ for command_name in pi npm; do
 	fi
 done
 
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始更新 Pi 扩展"
-pi update --extensions --no-approve
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始更新 Pi 主程序和扩展"
+pi update --all --no-approve
 
 if npm install-scripts --help >/dev/null 2>&1; then
 	(
@@ -22,4 +22,4 @@ if npm install-scripts --help >/dev/null 2>&1; then
 	)
 fi
 
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Pi 扩展已是当前最新版"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Pi 主程序和扩展已是当前最新版"
