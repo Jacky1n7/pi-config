@@ -1,7 +1,7 @@
 # 我的 Pi Coding Agent 配置
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-success)](LICENSE)
-[![Pi](https://img.shields.io/badge/Pi-0.84.3-8A2BE2)](https://pi.dev)
+[![Pi](https://img.shields.io/badge/Pi-latest-8A2BE2)](https://pi.dev)
 [![Plugins](https://img.shields.io/badge/plugins-17-blue)](#六插件目录17个按用途分组)
 [![Skills](https://img.shields.io/badge/skills-18-green)](#七全局-skill-清单18个)
 [![MCP](https://img.shields.io/badge/MCP-2-orange)](#八mcp-server2个)
@@ -208,13 +208,15 @@ export default function (pi: ExtensionAPI) {
 git clone https://github.com/Jacky1n7/pi-config.git
 cd pi-config
 
-# 2. 一键安装（17 个锁版 Pi 包 + UI 默认项 + 2 个 MCP）
+# 2. 一键安装（17 个自动更新 Pi 包 + UI 默认项 + 2 个 MCP）
 bash install.sh
 
 # 3. 重启 pi，让所有插件和 MCP server 生效
 ```
 
-脚本会自动安装经 Pi 0.84.3 实测的锁版包，启用 ast-grep、SQLite/FTS5 和 macOS 文件监听所需的已审核 npm 安装脚本，并合并 UI 与 MCP 配置。已有的 provider、model、登录信息、自定义扩展和其他 MCP server 都会保留。
+脚本会安装 17 个包的当前最新版，启用 ast-grep、SQLite/FTS5 和 macOS 文件监听所需的已审核 npm 安装脚本，并合并 UI 与 MCP 配置。已有的 provider、model、登录信息、自定义扩展和其他 MCP server 都会保留。
+
+在 macOS 上，安装脚本还会注册用户级自动更新任务：登录时运行一次，此后每 6 小时执行 `pi update --extensions`。两个 MCP server 使用 `@latest`，每次懒启动时解析最新版。为避免覆盖本仓库配套的汉化，后台任务不会自动升级 Pi 主程序；需要时可手动执行 `pi update`，然后重新应用汉化。
 
 > 需要 Node.js 22.5 或更高版本；脚本会在修改前做版本检查。
 
@@ -386,19 +388,19 @@ Upstash 的 Context7 MCP。给模型实时拉取第三方库的**最新文档**�
 ```json
 {
   "command": "npx",
-  "args": ["-y", "@upstash/context7-mcp@4.0.3"],
+  "args": ["-y", "@upstash/context7-mcp@latest"],
   "lifecycle": "lazy"
 }
 ```
 
 ### `chrome-devtools`
 
-Chrome DevTools 远程控制，可用于点击、截图、网络抓包和性能分析。通过锁版 `npx` 按需启动，不再依赖其他用户的本地绝对路径，并默认关闭使用统计。
+Chrome DevTools 远程控制，可用于点击、截图、网络抓包和性能分析。通过 `npx @latest` 按需启动，不再依赖其他用户的本地绝对路径，并默认关闭使用统计。
 
 ```json
 {
   "command": "npx",
-  "args": ["-y", "chrome-devtools-mcp@1.8.0", "--no-usage-statistics"],
+  "args": ["-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"],
   "lifecycle": "lazy"
 }
 ```

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pi 0.84.3 全量中文配置：17 个锁版 Pi 包 + 2 个懒启动 MCP server。
+# Pi 全量中文配置：17 个自动跟随最新版的 Pi 包 + 2 个懒启动 MCP server。
 # 不读取或修改 auth.json，不覆盖已有 provider/model 配置。
 set -euo pipefail
 
@@ -23,25 +23,25 @@ fi
 
 echo "Pi: $(pi --version)"
 echo "Node.js: $(node --version)"
-echo "📦 安装 17 个已验证版本的 Pi 包..."
+echo "📦 安装 17 个 Pi 包的当前最新版..."
 PACKAGES=(
-	"pi-subagents@0.56.0"
-	"pi-mcp-adapter@2.27.0"
-	"pi-web-access@0.24.2"
-	"pi-lens@4.1.2"
-	"context-mode@1.0.169"
-	"pi-hermes-memory@0.9.6"
-	"@juicesharp/rpiv-todo@2.7.1"
-	"@narumitw/pi-statusline@0.49.13"
-	"pi-marketplace@0.1.3"
-	"@narumitw/pi-github-pr@0.49.6"
-	"@narumitw/pi-plan-mode@0.55.0"
-	"@narumitw/pi-goal@0.54.0"
-	"pi-playwright@0.1.1"
-	"pi-simplify@0.2.3"
-	"@firstpick/pi-prompts-git-pr@0.1.6"
-	"@firstpick/pi-skill-deep-research@0.1.9"
-	"@victor-software-house/pi-curated-themes@0.2.1"
+	"pi-subagents"
+	"pi-mcp-adapter"
+	"pi-web-access"
+	"pi-lens"
+	"context-mode"
+	"pi-hermes-memory"
+	"@juicesharp/rpiv-todo"
+	"@narumitw/pi-statusline"
+	"pi-marketplace"
+	"@narumitw/pi-github-pr"
+	"@narumitw/pi-plan-mode"
+	"@narumitw/pi-goal"
+	"pi-playwright"
+	"pi-simplify"
+	"@firstpick/pi-prompts-git-pr"
+	"@firstpick/pi-skill-deep-research"
+	"@victor-software-house/pi-curated-themes"
 )
 
 failed_packages=()
@@ -60,6 +60,10 @@ if npm install-scripts --help >/dev/null 2>&1; then
 		npm install-scripts approve @ast-grep/cli better-sqlite3 context-mode fsevents
 	)
 fi
+
+echo ""
+echo "🔄 将所有未锁版扩展更新到当前最新版..."
+pi update --extensions --no-approve
 
 echo ""
 echo "🎨 合并 Pi 界面默认项..."
@@ -101,6 +105,11 @@ if [ "${#failed_packages[@]}" -ne 0 ]; then
 	echo "" >&2
 	echo "✗ 以下包安装失败：${failed_packages[*]}" >&2
 	exit 1
+fi
+
+if [ "$(uname -s)" = "Darwin" ]; then
+	echo ""
+	"$SCRIPT_DIR/install-auto-update.sh"
 fi
 
 echo ""
