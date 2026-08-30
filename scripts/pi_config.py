@@ -179,13 +179,8 @@ def apply_global(args: argparse.Namespace) -> None:
     managed.extend(target for _, target in global_targets())
     print("Mode:", "APPLY" if args.apply else "DRY-RUN")
     pi_version = current_pi_version()
-    locked_pi = manifest["piCore"]["version"]
-    print("Pi core current/locked:", pi_version, locked_pi)
-    if args.apply and pi_version != locked_pi:
-        raise SystemExit(
-            f"Pi core version mismatch: installed={pi_version}, locked={locked_pi}. "
-            "Install the locked Pi core explicitly before applying configuration."
-        )
+    pi_policy = manifest["piCore"]["updatePolicy"]
+    print("Pi core current/policy:", pi_version, pi_policy)
     for spec in desired_specs:
         print("PACKAGE", spec)
     for source, target in global_targets():
@@ -327,6 +322,11 @@ def check_repo() -> list[str]:
                 errors.append(f"credential-like assignment: {relative}")
 
     manifest = load_json(REPO / "manifest/packages.json")
+    pi_core = manifest.get("piCore", {})
+    if "version" in pi_core:
+        errors.append("Pi core must not be version-pinned")
+    if pi_core.get("updatePolicy") != "latest":
+        errors.append("Pi core updatePolicy must be latest")
     seen: set[str] = set()
     for item in manifest["packages"]:
         if not re.fullmatch(r"\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?", item["version"]):
@@ -354,9 +354,8 @@ def check_installed(profile: str) -> list[str]:
         return [f"missing {settings_path}"]
     settings = load_json(settings_path)
     installed_pi = current_pi_version()
-    locked_pi = manifest["piCore"]["version"]
-    if installed_pi != locked_pi:
-        errors.append(f"Pi core: installed={installed_pi}, locked={locked_pi}")
+    if installed_pi is None:
+        errors.append("Pi core is not installed")
     desired = [package_spec(item) for item in manifest["packages"]]
     if settings.get("packages") != desired:
         errors.append("installed package specs differ from exact manifest order/pins")

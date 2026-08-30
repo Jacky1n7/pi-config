@@ -2,8 +2,8 @@
   "_meta": {
     "schemaVersion": 2,
     "sourceOfTruth": "manifest/packages.json",
-    "piCore": "0.84.3",
-    "policy": "exact package and MCP pins; no unattended upstream updates"
+    "piCorePolicy": "latest via ./update.sh --self; never downgraded by this repo",
+    "policy": "latest Pi core; exact extension package and MCP pins; no unattended all-package updates"
   },
   "resources": {
     "packages": 17,

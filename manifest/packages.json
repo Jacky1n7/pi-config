@@ -3,7 +3,8 @@
   "generatedAt": "2026-08-25",
   "piCore": {
     "package": "@earendil-works/pi-coding-agent",
-    "version": "0.84.3",
+    "updatePolicy": "latest",
+    "updateCommand": "./update.sh --self",
     "node": ">=22.5.0"
   },
   "packages": [

@@ -1,6 +1,6 @@
 # Jacky's Pi Workflow
 
-[![Pi](https://img.shields.io/badge/Pi-0.84.3-8A2BE2)](https://pi.dev)
+[![Pi](https://img.shields.io/npm/v/@earendil-works/pi-coding-agent?label=Pi)](https://www.npmjs.com/package/@earendil-works/pi-coding-agent)
 [![Packages](https://img.shields.io/badge/packages-17-blue)](manifest/packages.json)
 [![MCP](https://img.shields.io/badge/MCP-2-orange)](config/mcp/servers.json)
 [![License: MIT](https://img.shields.io/badge/license-MIT-success)](LICENSE)
@@ -15,8 +15,8 @@
 ## 核心原则
 
 1. 全局 `AGENTS.md` 只放稳定的跨项目规则；项目事实、命令和科研约束放项目 `AGENTS.md`。
-2. Extension、Skill、MCP 都按可执行供应链依赖管理；17 个 Pi 包和 2 个 MCP server 使用精确版本。
-3. 禁止无人值守 `pi update --all`。升级必须更新 lock manifest、审查、验证、提交后再 apply。
+2. Pi Core 不锁版本，通过 `pi update --self` 跟随最新稳定版；Extension、Skill、MCP 按可执行供应链依赖管理，17 个 Pi 包和 2 个 MCP server 使用精确版本。
+3. 禁止无人值守 `pi update --all`。扩展升级必须更新 lock manifest、审查、验证、提交后再 apply。
 4. 安装器只管理明确文件/键，不读取或复制 `auth.json`、provider credential、session、memory、cache、日志或真实 MCP token/env/header。
 5. 每次 apply 先备份到 `${XDG_STATE_HOME:-~/.local/state}/pi-config/backups/`，支持按 transaction 回滚。
 6. 科学/ML结果必须绑定代码、脏工作树、数据/切分、配置、种子、环境/硬件、指标口径和产物哈希。
@@ -27,19 +27,24 @@
 git clone https://github.com/Jacky1n7/pi-config.git
 cd pi-config
 
-# 1. 只打印计划，不修改系统
+# 1. Pi Core 跟随最新稳定版（本仓库不会降级或锁定它）
+./update.sh --self
+
+# 2. 只打印扩展与配置计划，不修改系统
 ./install.sh
 
-# 2. 应用 Jacky 的模型/UI profile；已安装且版本正确时可跳过包安装
+# 3. 应用 Jacky 的模型/UI profile；已安装且版本正确时可跳过包安装
 ./install.sh --apply --profile jacky
 
-# 当前机器已经是锁定版本时
+# 当前扩展已经是锁定版本时
 ./install.sh --apply --profile jacky --skip-packages
 
-# 3. 验证仓库与实际安装
+# 4. 验证仓库与实际安装
 ./scripts/check.sh
 ./scripts/check.sh --installed --profile jacky
 ```
+
+`./update.sh --self` 更新 Pi Core 后，会在 `~/pi-zh-pi-coding-agent/pi-zh-apply.py` 存在时自动重施中文补丁；可用 `PI_ZH_APPLY` 指定其他路径。
 
 修改 context files、Prompts 或 Skills 后，重启 Pi 或运行 `/reload`。
 
@@ -144,16 +149,19 @@ scripts/rollback.sh
 ## 更新策略
 
 ```bash
-# 默认只检查实际安装是否与锁一致
+# Pi Core 不锁版本，单独更新到最新稳定版
+./update.sh --self
+
+# 默认只检查扩展与配置是否与锁一致
 ./update.sh
 
-# 重新同步到仓库锁，不解析 latest
+# 重新同步扩展与配置到仓库锁，不解析 latest
 ./update.sh --apply
 ```
 
-本仓库不会自动更新 Pi core、Extension 或 MCP。更新流程应当是：
+本仓库不会降级或强制指定 Pi Core 版本；Pi Core 通过 `./update.sh --self` 独立跟随最新稳定版，并在可用时自动恢复中文补丁。Extension 与 MCP 仍使用精确锁定版本，其更新流程应当是：
 
-1. 在分支中修改精确版本；
+1. 在分支中修改扩展或 MCP 的精确版本；
 2. 审查 package 来源和变更；
 3. 在临时 HOME 及真实机器验证；
 4. 运行 npm audit、MCP 连接和项目 smoke checks；

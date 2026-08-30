@@ -2,11 +2,13 @@
 # Deprecated: unattended `pi update --all` was intentionally removed.
 set -euo pipefail
 cat <<'EOF'
-Unattended upstream updates are disabled for reproducibility and supply-chain safety.
+Unattended all-package updates are disabled for reproducibility and supply-chain safety.
+Pi core is intentionally unpinned and should track the latest stable release.
 
 Use:
-  ./update.sh            # read-only drift/health check
-  ./update.sh --apply    # reconcile to repository-pinned versions
+  ./update.sh --self     # update Pi core only
+  ./update.sh            # read-only extension/config drift check
+  ./update.sh --apply    # reconcile extensions/config to repository-pinned versions
 
-Upgrade pins through a reviewed pi-config commit, then run the checks again.
+Upgrade extension pins through a reviewed pi-config commit, then run the checks again.
 EOF
