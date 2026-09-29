@@ -1,0 +1,9 @@
+{
+  "childExtensionPaths": [
+    "/Users/lixiaoran/.pi/agent/npm/node_modules/custom-provider-pi/custom-provider.ts"
+  ],
+  "llmModelOverride": "agentrouter-resp/deepseek-v4-flash",
+  "llmThinkingOverride": "off",
+  "memoryCharLimit": 8000,
+  "userCharLimit": 8000
+}

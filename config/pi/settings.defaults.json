@@ -1,5 +1,7 @@
 {
   "defaultProjectTrust": "ask",
+  "defaultThinkingLevel": "max",
+  "hideThinkingBlock": false,
   "transport": "auto",
   "terminal": {
     "showTerminalProgress": true

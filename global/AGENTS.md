@@ -5,9 +5,20 @@
 ## 沟通与证据
 
 - 面向用户默认使用简体中文；代码、命令、协议字段和报错保持原文。
+- 面向用户可见的计划、进度、推理摘要、决策依据和解释使用简体中文。
+- 不展示或伪造模型隐藏的原始思维链；需要说明推理时，提供简洁、可验证、面向结论的中文摘要。
 - 区分已验证事实、合理推断和待验证事项，不把搜索摘要、模型判断或退出码单独当作最终证据。
 - 技术/API事实优先官方文档、规范和源码；时效性强或用户要求时联网核验。
 - 最终汇报至少包含：变更文件、验证命令与结果、未验证项、残余风险。
+
+## 本机环境真源
+
+- 全局 Pi 配置（settings、AGENTS.md、APPEND_SYSTEM.md、prompts、skills、pi-lens、MCP server、扩展锁）的唯一真源是 `~/Documents/Codex/2026-08-25/pi/pi-config`。不要直接手改 `~/.pi/agent/*`：改仓库后跑 `./install.sh --apply --profile jacky`，再用 `./scripts/check.sh --installed --profile jacky` 验证；只读 drift 检查用 `./update.sh`。provider 凭据（`auth.json`、`custom-providers.json`、`models.json`）不在托管范围，属本机私有配置。
+- 该仓库不锁也不降级 Pi Core：用 `./update.sh --self` 跟随最新稳定版；扩展与 MCP 使用精确版本，升级必须走「改锁 → 审查变更 → 真实环境验证 → 提交 → apply」。禁止无人值守 `pi update --all`。
+- Pi Core 升级会覆盖本机中文补丁。升级后必须运行 `python3 ~/pi-zh-pi-coding-agent/pi-zh-apply.py --check`，确认 0 待处理、0 未匹配、运行入口已激活；出现未匹配时按该仓库 `docs/maintenance.md` 重生成补丁集，不得只改版本号。
+- MCP server 与 Web 工具是按需生命周期：MCP 为 lazy，首次调用需启动进程（数秒延迟），pi-mcp-adapter 3.x 的工具名形如 `<server>_<tool>`；Web 工具当前配置为 eager 常驻。不要在未验证连接的情况下断言某个 server 或工具不可用。
+- pi-subagents ≥0.73 的新会话默认只暴露 `subagents_enable`：需要委托时先调用它，`subagent` 才会出现在下一次模型请求里。
+- 不要在 `enabledModels` / `modelThinkingLevels` 里保留本机不可用的模型（如 ChatGPT 账号下的 `openai-codex/gpt-5.6-sol`）：无扩展子进程（记忆库 consolidation、后台整理）会回落到它并全部失败。改完 `settings.json` / `hermes-memory-config.json` 必须在**新进程**里验证，当前会话仍用旧配置。
 
 ## 开工前
 
@@ -32,6 +43,7 @@
 - 可重复网页交互：Playwright；Console、Network、性能和 Lighthouse：Chrome DevTools。
 - 大日志、测试输出、JSON和仓库统计：Context Mode，避免把原始大输出灌入上下文。
 - 代码定位优先 `symbol_search → module_report → read_symbol`；需要结构搜索时再激活 AST/LSP 工具。
+- Pi 扩展/配置改动后重启 Pi 或 `/reload` 才生效；改了扩展版本必须新开进程实测，不能只凭 `check.sh` 通过就宣称可用。
 
 ## 实施与验证
 

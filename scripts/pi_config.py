@@ -129,7 +129,10 @@ def package_spec(item: dict[str, str]) -> str:
 def global_targets() -> list[tuple[Path, Path]]:
     pairs = [
         (REPO / "global/AGENTS.md", PI_AGENT / "AGENTS.md"),
+        (REPO / "global/APPEND_SYSTEM.md", PI_AGENT / "APPEND_SYSTEM.md"),
         (REPO / "config/pi-lens/config.json", LENS_FILE),
+        (REPO / "config/pi/web-search.json", PI_AGENT / "web-search.json"),
+        (REPO / "config/pi/hermes-memory.json", PI_AGENT / "hermes-memory-config.json"),
     ]
     for source in sorted((REPO / "global/prompts").glob("*.md")):
         pairs.append((source, PI_AGENT / "prompts" / source.name))
@@ -170,6 +173,29 @@ def validate_node() -> None:
         raise SystemExit(f"Node.js >=22.5.0 required; found {version}")
 
 
+def ensure_approval_pins(npm_dir: Path, pins: list[str]) -> None:
+    """Keep every explicitly pinned install-script approval in allowScripts.
+
+    `npm install-scripts approve <name>` drops pins for other versions of the
+    same package, and a name that is not installed now (an optional dependency
+    such as fsevents on another platform) must not fail the whole apply.
+    """
+    if not pins:
+        return
+    manifest_path = npm_dir / "package.json"
+    if not manifest_path.exists():
+        return
+    data = load_json(manifest_path)
+    allow = data.setdefault("allowScripts", {})
+    changed = False
+    for pin in pins:
+        if not allow.get(pin):
+            allow[pin] = True
+            changed = True
+    if changed:
+        atomic_json(manifest_path, data)
+
+
 def apply_global(args: argparse.Namespace) -> None:
     validate_node()
     manifest = load_json(REPO / "manifest/packages.json")
@@ -203,7 +229,8 @@ def apply_global(args: argparse.Namespace) -> None:
                 subprocess.run(["pi", "install", spec], check=True)
         npm_dir = PI_AGENT / "npm"
         approval = manifest.get("installScriptApprovals", [])
-        if npm_dir.exists() and approval and shutil.which("npm"):
+        pins = manifest.get("installScriptApprovalPins", [])
+        if npm_dir.exists() and (approval or pins) and shutil.which("npm"):
             probe = subprocess.run(
                 ["npm", "install-scripts", "--help"],
                 cwd=npm_dir,
@@ -212,7 +239,24 @@ def apply_global(args: argparse.Namespace) -> None:
                 check=False,
             )
             if probe.returncode == 0:
-                subprocess.run(["npm", "install-scripts", "approve", *approval], cwd=npm_dir, check=True)
+                for name in approval:
+                    result = subprocess.run(
+                        ["npm", "install-scripts", "approve", "-a", name],
+                        cwd=npm_dir,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.STDOUT,
+                        text=True,
+                        check=False,
+                    )
+                    if result.returncode != 0:
+                        lines = (result.stdout or "").strip().splitlines()
+                        print(
+                            "WARN install-script approval skipped:",
+                            name,
+                            lines[-1] if lines else "npm returned non-zero",
+                        )
+                ensure_approval_pins(npm_dir, pins)
+                subprocess.run(["npm", "install-scripts", "ls"], cwd=npm_dir, check=False)
 
     existing = load_json(settings_path) if settings_path.exists() else {}
     defaults = load_json(REPO / "config/pi/settings.defaults.json")

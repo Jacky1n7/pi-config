@@ -1,14 +1,13 @@
 {
-  "theme": "glacier/gruvbox-dark",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "high",
+  "theme": "light/atom",
+  "defaultProvider": "agentrouter-resp",
+  "defaultModel": "deepseek-v4-flash",
   "enabledModels": [
-    "openai-codex/gpt-5.6-sol",
-    "openai-codex/gpt-5.6-luna"
+    "agentrouter-resp/deepseek-v4-flash",
+    "openai-codex/gpt-5.6-luna",
+    "my-proxy/gpt-5.6"
   ],
   "modelThinkingLevels": {
-    "openai-codex/gpt-5.6-sol": "high",
     "openai-codex/gpt-5.6-luna": "max"
   },
   "steeringMode": "all",

@@ -1,7 +1,7 @@
 # Jacky's Pi Workflow
 
 [![Pi](https://img.shields.io/npm/v/@earendil-works/pi-coding-agent?label=Pi)](https://www.npmjs.com/package/@earendil-works/pi-coding-agent)
-[![Packages](https://img.shields.io/badge/packages-17-blue)](manifest/packages.json)
+[![Packages](https://img.shields.io/badge/packages-18-blue)](manifest/packages.json)
 [![MCP](https://img.shields.io/badge/MCP-2-orange)](config/mcp/servers.json)
 [![License: MIT](https://img.shields.io/badge/license-MIT-success)](LICENSE)
 
@@ -15,7 +15,7 @@
 ## 核心原则
 
 1. 全局 `AGENTS.md` 只放稳定的跨项目规则；项目事实、命令和科研约束放项目 `AGENTS.md`。
-2. Pi Core 不锁版本，通过 `pi update --self` 跟随最新稳定版；Extension、Skill、MCP 按可执行供应链依赖管理，17 个 Pi 包和 2 个 MCP server 使用精确版本。
+2. Pi Core 不锁版本，通过 `pi update --self` 跟随最新稳定版；Extension、Skill、MCP 按可执行供应链依赖管理，18 个 Pi 包和 2 个 MCP server 使用精确版本。
 3. 禁止无人值守 `pi update --all`。扩展升级必须更新 lock manifest、审查、验证、提交后再 apply。
 4. 安装器只管理明确文件/键，不读取或复制 `auth.json`、provider credential、session、memory、cache、日志或真实 MCP token/env/header。
 5. 每次 apply 先备份到 `${XDG_STATE_HOME:-~/.local/state}/pi-config/backups/`，支持按 transaction 回滚。
@@ -48,6 +48,14 @@ cd pi-config
 
 修改 context files、Prompts 或 Skills 后，重启 Pi 或运行 `/reload`。
 
+## 全局中文交互与推理展示
+
+- `global/APPEND_SYSTEM.md` 作为全局追加系统提示，要求所有面向用户的对话、计划、进度、推理摘要和解释默认使用简体中文。
+- `global/AGENTS.md` 提供跨项目一致的中文沟通与证据规则。
+- `defaultThinkingLevel` 默认为 `max`，`hideThinkingBlock` 为 `false`；模型或 Provider 提供的可见 thinking/reasoning block 默认展示，可用 `Ctrl+T` 折叠或展开。若想降低耗时与成本，把 `config/pi/settings.defaults.json` 的该值改成 `high` 后重新 apply 即可。
+- 模型隐藏的原始思维链、私密草稿和逐 token 推理无法也不应暴露；需要说明推理时，系统提供简洁、可验证、面向结论的中文推理摘要。
+- 代码、命令、路径、配置键、API/协议字段、日志和原始报错保持原文，必要时附中文解释。
+
 ### 应用重点项目模板
 
 ```bash
@@ -77,12 +85,15 @@ cd pi-config
 ## 配置结构
 
 ```text
-manifest/packages.json              # 17 个 Pi package 精确版本，唯一来源
+manifest/packages.json              # 18 个 Pi package 精确版本，唯一来源
 config/pi/settings.defaults.json    # 通用非密钥默认项
 config/pi/settings.jacky.json       # Jacky 的模型/UI profile
 config/mcp/servers.json             # 精确版本 MCP 命令
 config/pi-lens/config.json          # 全局 Pi Lens 基线
+config/pi/web-search.json           # pi-web-access 工具激活策略（eager）
+config/pi/hermes-memory.json        # 记忆库子进程模型与字符上限（避免 consolidation 回退失败）
 global/AGENTS.md                    # 全局上下文规则
+global/APPEND_SYSTEM.md             # 全局中文交互与推理摘要系统提示
 global/prompts/                     # /debug /test-fix /release-check /handoff
 global/skills/scientific-ml-experiment/
 templates/plant-geometry-phenotyping-lab/
@@ -95,16 +106,17 @@ scripts/rollback.sh
 
 兼容入口 `install.sh`、`update.sh`、`mcp.json`、`settings.defaults.json` 仍保留。`config.json` 只是人类可读索引，不再复制 package 清单。
 
-## 17 个锁定 Pi 包
+## 18 个锁定 Pi 包
 
 | 领域 | 包 |
 | --- | --- |
-| 编排 | `pi-subagents@0.56.0`、`@narumitw/pi-plan-mode@0.55.0`、`@narumitw/pi-goal@0.54.0`、`@juicesharp/rpiv-todo@2.7.1` |
-| 代码质量 | `pi-lens@4.1.2`、`pi-simplify@0.2.3` |
-| 上下文与记忆 | `context-mode@1.0.169`、`pi-hermes-memory@0.9.6` |
-| Web/MCP/浏览器 | `pi-web-access@0.24.2`、`pi-mcp-adapter@2.27.0`、`pi-playwright@0.1.1` |
-| Git/PR/UI | `@narumitw/pi-github-pr@0.49.6`、`@firstpick/pi-prompts-git-pr@0.1.6`、`@narumitw/pi-statusline@0.49.13` |
+| 编排 | `pi-subagents@0.73.1`、`@narumitw/pi-plan-mode@0.58.3`、`@narumitw/pi-goal@0.54.8`、`@juicesharp/rpiv-todo@2.11.0` |
+| 代码质量 | `pi-lens@4.3.0`、`pi-simplify@0.2.3` |
+| 上下文与记忆 | `context-mode@1.0.169`、`pi-hermes-memory@0.9.9` |
+| Web/MCP/浏览器 | `pi-web-access@0.33.0`、`pi-mcp-adapter@3.2.0`、`pi-playwright@0.1.2` |
+| Git/PR/UI | `@narumitw/pi-github-pr@0.49.8`、`@firstpick/pi-prompts-git-pr@0.1.7`、`@narumitw/pi-statusline@0.50.2` |
 | 研究/生态/主题 | `@firstpick/pi-skill-deep-research@0.1.9`、`pi-marketplace@0.1.3`、`@victor-software-house/pi-curated-themes@0.2.1` |
+| Provider | `custom-provider-pi@0.1.13` |
 
 机器可读详情见 [`manifest/packages.json`](manifest/packages.json)。
 
@@ -116,9 +128,10 @@ scripts/rollback.sh
 - 重复浏览器交互：Playwright。
 - Console、Network、性能与 Lighthouse：Chrome DevTools MCP。
 - 大日志、测试输出、JSON、仓库统计：Context Mode。
+- Web 工具（`pi-web-access@0.33.0`）默认保留全部工具，无需先调用 `web_enable`；MCP 两个 server 为 lazy，首次调用会有 npx 启动延迟。
 - 多步骤：Todo；只读方案：Plan；自主闭环：Goal；并行侦察/审查：Subagents；重大决策交叉质询：Council。
 
-详细规则由 [`global/AGENTS.md`](global/AGENTS.md) 安装到 `~/.pi/agent/AGENTS.md`。
+详细规则由 [`global/AGENTS.md`](global/AGENTS.md) 安装到 `~/.pi/agent/AGENTS.md`；中文交互系统提示由 [`global/APPEND_SYSTEM.md`](global/APPEND_SYSTEM.md) 安装到 `~/.pi/agent/APPEND_SYSTEM.md`。
 
 ## 项目工作流
 
