@@ -6,13 +6,14 @@
     "policy": "latest Pi core; exact extension package and MCP pins; no unattended all-package updates"
   },
   "resources": {
-    "packages": 18,
+    "packages": 19,
     "globalPrompts": ["debug", "test-fix", "release-check", "handoff"],
     "globalSystemAppend": "Simplified Chinese interaction and reasoning-summary policy",
     "globalSkills": ["scientific-ml-experiment"],
     "projectTemplates": ["plant-geometry-phenotyping-lab", "smart-beekeeping-challenge-cup"],
     "mcpServers": ["context7@4.0.3", "chrome-devtools@1.8.0"],
-    "webSearchToolActivation": "eager (pi-web-access keeps web tools from the first request)"
+    "webSearchToolActivation": "eager (pi-web-access keeps web tools from the first request)",
+    "tui": "pi-cc-extensions (Claude Code style tool rows + diffs), theme cc-light/cc-dark"
   },
   "managedDestinations": [
     "~/.pi/agent/settings.json (owned keys + exact package list)",
@@ -23,6 +24,7 @@
     "~/.pi-lens/config.json",
     "~/.pi/agent/web-search.json",
     "~/.pi/agent/hermes-memory-config.json",
+    "~/.pi/agent/pi-cc-extensions.json",
     "~/.config/mcp/mcp.json (owned server names only)"
   ]
 }

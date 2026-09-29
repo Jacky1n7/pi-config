@@ -6,6 +6,9 @@
   "terminal": {
     "showTerminalProgress": true
   },
+  "markdown": {
+    "mermaid": "final"
+  },
   "compaction": {
     "enabled": true,
     "reserveTokens": 16384,

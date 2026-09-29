@@ -1,5 +1,5 @@
 {
-  "theme": "light/atom",
+  "theme": "cc-light/cc-dark",
   "defaultProvider": "agentrouter-resp",
   "defaultModel": "deepseek-v4-flash",
   "enabledModels": [

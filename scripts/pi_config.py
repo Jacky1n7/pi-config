@@ -133,6 +133,7 @@ def global_targets() -> list[tuple[Path, Path]]:
         (REPO / "config/pi-lens/config.json", LENS_FILE),
         (REPO / "config/pi/web-search.json", PI_AGENT / "web-search.json"),
         (REPO / "config/pi/hermes-memory.json", PI_AGENT / "hermes-memory-config.json"),
+        (REPO / "config/pi/pi-cc-extensions.json", PI_AGENT / "pi-cc-extensions.json"),
     ]
     for source in sorted((REPO / "global/prompts").glob("*.md")):
         pairs.append((source, PI_AGENT / "prompts" / source.name))

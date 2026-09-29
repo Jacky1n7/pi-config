@@ -1,7 +1,7 @@
 # Jacky's Pi Workflow
 
 [![Pi](https://img.shields.io/npm/v/@earendil-works/pi-coding-agent?label=Pi)](https://www.npmjs.com/package/@earendil-works/pi-coding-agent)
-[![Packages](https://img.shields.io/badge/packages-18-blue)](manifest/packages.json)
+[![Packages](https://img.shields.io/badge/packages-19-blue)](manifest/packages.json)
 [![MCP](https://img.shields.io/badge/MCP-2-orange)](config/mcp/servers.json)
 [![License: MIT](https://img.shields.io/badge/license-MIT-success)](LICENSE)
 
@@ -92,6 +92,7 @@ config/mcp/servers.json             # 精确版本 MCP 命令
 config/pi-lens/config.json          # 全局 Pi Lens 基线
 config/pi/web-search.json           # pi-web-access 工具激活策略（eager）
 config/pi/hermes-memory.json        # 记忆库子进程模型与字符上限（避免 consolidation 回退失败）
+config/pi/pi-cc-extensions.json     # Claude Code 风格 TUI（关闭自带 footer，保留 statusline）
 global/AGENTS.md                    # 全局上下文规则
 global/APPEND_SYSTEM.md             # 全局中文交互与推理摘要系统提示
 global/prompts/                     # /debug /test-fix /release-check /handoff
@@ -106,7 +107,7 @@ scripts/rollback.sh
 
 兼容入口 `install.sh`、`update.sh`、`mcp.json`、`settings.defaults.json` 仍保留。`config.json` 只是人类可读索引，不再复制 package 清单。
 
-## 18 个锁定 Pi 包
+## 19 个锁定 Pi 包
 
 | 领域 | 包 |
 | --- | --- |
@@ -115,6 +116,7 @@ scripts/rollback.sh
 | 上下文与记忆 | `context-mode@1.0.169`、`pi-hermes-memory@0.9.9` |
 | Web/MCP/浏览器 | `pi-web-access@0.33.0`、`pi-mcp-adapter@3.2.0`、`pi-playwright@0.1.2` |
 | Git/PR/UI | `@narumitw/pi-github-pr@0.49.8`、`@firstpick/pi-prompts-git-pr@0.1.7`、`@narumitw/pi-statusline@0.50.2` |
+| TUI/外观 | `pi-cc-extensions@0.9.8`（Claude Code 风格工具行/diff，附带 `cc-dark`/`cc-light` 主题） |
 | 研究/生态/主题 | `@firstpick/pi-skill-deep-research@0.1.9`、`pi-marketplace@0.1.3`、`@victor-software-house/pi-curated-themes@0.2.1` |
 | Provider | `custom-provider-pi@0.1.13` |
 

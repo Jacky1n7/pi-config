@@ -25,7 +25,8 @@
     { "name": "@firstpick/pi-prompts-git-pr", "version": "0.1.7" },
     { "name": "@firstpick/pi-skill-deep-research", "version": "0.1.9" },
     { "name": "@victor-software-house/pi-curated-themes", "version": "0.2.1" },
-    { "name": "custom-provider-pi", "version": "0.1.13" }
+    { "name": "custom-provider-pi", "version": "0.1.13" },
+    { "name": "pi-cc-extensions", "version": "0.9.8" }
   ],
   "installScriptApprovals": [
     "@ast-grep/cli",
